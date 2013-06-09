@@ -37,7 +37,10 @@ bool UMRaytracer::render(const UMScene& scene, UMRenderParameter& parameter)
 {
 	if (width_ == 0 || height_ == 0) return false;
 	const int wh = width_ * height_;
-	parameter.mutable_output_image().resize(wh);
+	parameter.mutable_output_image().set_width(width_);
+	parameter.mutable_output_image().set_height(height_);
+	UMImage::ImageBuffer& buffer = parameter.mutable_output_image().mutable_buffer();
+	buffer.resize(wh);
 
 	// garbage code for test
 	UMRay ray( UMVec3d(0, 0, -500), UMVec3d(0) );
@@ -53,7 +56,7 @@ bool UMRaytracer::render(const UMScene& scene, UMRenderParameter& parameter)
 
 			ray.set_direction(UMVec3d( x - half_width, y - half_height, 255));
 
-			parameter.mutable_output_image()[width_ * y + x] = trace(ray, scene, shader_param);
+			buffer[width_ * y + x] = trace(ray, scene, shader_param);
 		}
 	}
 	

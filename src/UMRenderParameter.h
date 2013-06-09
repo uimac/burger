@@ -2,6 +2,8 @@
 #pragma once
 
 #include <vector>
+
+#include "UMImage.h"
 #include "UMVector.h"
 
 namespace burger
@@ -13,7 +15,6 @@ namespace burger
 class UMRenderParameter
 {
 public:
-	typedef std::vector<UMVec3d> ImageBuffer;
 
 	UMRenderParameter() {}
 	~UMRenderParameter() {}
@@ -21,15 +22,15 @@ public:
 	/**
 	 * get output image
 	 */
-	const ImageBuffer& output_image() { return output_image_; } 
+	const UMImage& output_image() const { return output_image_; } 
 	
 	/**
 	 * get output image
 	 */
-	ImageBuffer&  mutable_output_image() { return output_image_; } 
+	UMImage&  mutable_output_image() { return output_image_; } 
 
 private:
-	ImageBuffer output_image_;
+	UMImage output_image_;
 };
 
 } // burger

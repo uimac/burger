@@ -19,7 +19,7 @@ public:
 	~UMPrimitive() {}
 	
 	/**
-	 * ray sphere intersection
+	 * ray intersection
 	 * @param [in] ray a ray
 	 * @param [in|out] parameter shading parameters
 	 */

@@ -1,6 +1,6 @@
 /// UMMain.cpp ///
 
-///#include "bmpexporter.h"
+#include "UMTga.h"
 
 #include "UMVector.h"
 #include "UMPrimitive.h"
@@ -22,7 +22,7 @@ int main()
 
 	UMScene scene;
 	UMRenderParameter parameter;
-	UMSpherePtr sphere1(new UMSphere(-20.0, 250.0));
+	UMSpherePtr sphere1(new UMSphere(UMVec3d(0, -100, 0), 250.0));
 	UMSpherePtr sphere2(new UMSphere(UMVec3d(200, 0, 0), 200.0));
 	sphere1->set_color(UMVec3d(1.0, 0.0, 0.0));
 	sphere2->set_color(UMVec3d(0.0, 0.0, 1.0));
@@ -35,28 +35,12 @@ int main()
 	renderer->set_height(height);
 	renderer->render(scene, parameter);
 
-	if (static_cast<int>(parameter.output_image().size()) != wh) {
+	if (!parameter.output_image().is_validate()) {
 		return -1;
 	}
 
-	// floating image to 8bit rgb
-	const double inv_gamma = 1.0 / 22.0;
-	std::vector<unsigned char> img;
-	img.resize(width * height * 3);
-	for (int y = 0; y < height; ++y)
-	{
-		for (int x = 0; x < width; ++x)
-		{
-			int pos = width * y + x;
-			UMVec3d col = parameter.output_image().at(pos);
-			img[pos * 3 + 0] = static_cast<int>(pow(col.z, inv_gamma) * 0xFF);
-			img[pos * 3 + 1] = static_cast<int>(pow(col.y, inv_gamma) * 0xFF);
-			img[pos * 3 + 2] = static_cast<int>(pow(col.x, inv_gamma) * 0xFF);
-		}
-	}
-	
-	// TODO
-	//exportToBmp("hoge.bmp", reinterpret_cast<unsigned char*>(&(*img.begin())), width, height);
+	UMTga tga;
+	tga.save("hoge.tga", parameter.output_image());
 
 	return 0;
 }

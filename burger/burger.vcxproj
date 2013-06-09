@@ -31,8 +31,10 @@
     <ClCompile Include="..\src\UMPlane.cpp" />
     <ClCompile Include="..\src\UMRaytracer.cpp" />
     <ClCompile Include="..\src\UMSphere.cpp" />
+    <ClCompile Include="..\src\UMTga.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\UMImage.h" />
     <ClInclude Include="..\src\UMModelObject.h" />
     <ClInclude Include="..\src\UMPlane.h" />
     <ClInclude Include="..\src\UMPrimitive.h" />
@@ -43,6 +45,7 @@
     <ClInclude Include="..\src\UMScene.h" />
     <ClInclude Include="..\src\UMShaderParameter.h" />
     <ClInclude Include="..\src\UMSphere.h" />
+    <ClInclude Include="..\src\UMTga.h" />
     <ClInclude Include="..\src\UMVector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

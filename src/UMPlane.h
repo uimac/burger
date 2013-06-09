@@ -16,7 +16,7 @@ class UMShaderParameter;
 /**
  * a plane
  */
-class UMPlane
+class UMPlane : public UMPrimitive
 {
 public:
 	UMPlane() :
