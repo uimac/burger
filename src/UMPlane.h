@@ -21,35 +21,43 @@ class UMPlane : public UMPrimitive
 public:
 	UMPlane() :
 		point_(0),
-		normal_(0, 1, 0) {}
+		normal_(0, 1, 0),
+		color_(0){}
 
 	UMPlane(const UMVec3d& point, const UMVec3d& normal) :
 		point_(point),
-		normal_(normal) {}
+		normal_(normal),
+		color_(0){}
 
 	~UMPlane() {}
 
 	/**
 	 * get point
 	 */
-	inline UMVec3d point() const { return point_; }
+	UMVec3d point() const { return point_; }
 	
 	/**
 	 * set point
 	 * @param [in] point source point
 	 */
-	inline void set_point(const UMVec3d& point) { point_ = point; }
+	void set_point(const UMVec3d& point) { point_ = point; }
 
 	/**
 	 * get normal
 	 */
-	inline UMVec3d normal() const { return normal_; }
+	UMVec3d normal() const { return normal_; }
 	
 	/**
 	 * set normal
 	 * @param [in] normal source normal
 	 */
-	inline void set_normal(const UMVec3d& normal) { normal_ = normal; }
+	void set_normal(const UMVec3d& normal) { normal_ = normal; }
+
+	/**
+	 * set color
+	 * @param [in] color source color
+	 */
+	void set_color(const UMVec3d& color) { color_ = color; }
 
 	/**
 	 * ray plane intersection
@@ -61,7 +69,8 @@ public:
 private:
 	UMVec3d point_;
 	UMVec3d normal_;
-
+	
+	UMVec3d color_;
 };
 
 } // burger

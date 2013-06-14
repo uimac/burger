@@ -22,41 +22,43 @@ class UMSphere : public UMPrimitive
 public:
 	UMSphere() :
 		center_(0),
-		radius_(0) {}
+		radius_(0),
+		color_(0) {}
 
 	UMSphere(const UMVec3d& center, double radius) :
 		center_(center),
-		radius_(radius) {}
+		radius_(radius),
+		color_(0) {}
 
 	~UMSphere() {}
 	
 	/**
 	 * get center
 	 */
-	inline UMVec3d center() const { return center_; }
+	UMVec3d center() const { return center_; }
 	
 	/**
 	 * set center
 	 * @param [in] center source center
 	 */
-	inline void set_center(const UMVec3d& center) { center_ = center; }
+	void set_center(const UMVec3d& center) { center_ = center; }
 	
 	/**
 	 * get radius
 	 */
-	inline double radius() const { return radius_; }
+	double radius() const { return radius_; }
 	
 	/**
 	 * set radius
 	 * @param [in] radius source radius
 	 */
-	inline void set_radius(double radius) { radius_ = radius; }
+	void set_radius(double radius) { radius_ = radius; }
 	
 	/**
 	 * set color
 	 * @param [in] color source color
 	 */
-	inline void set_color(const UMVec3d& color) { color_ = color; }
+	void set_color(const UMVec3d& color) { color_ = color; }
 
 	/**
 	 * ray sphere intersection

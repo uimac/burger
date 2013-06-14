@@ -1,6 +1,10 @@
 /// UMVector.h ///
 #pragma once
 
+#include <cmath>
+#include <cfloat>
+#include <limits>
+
 namespace burger
 {
 
@@ -91,7 +95,7 @@ public:
 	 * minus
 	 */
 	UMVector2 operator - () const {
-		return UMVector2(v.x, v.y);
+		return UMVector2(-x, -y);
 	}
 
 	/**
@@ -122,6 +126,22 @@ public:
 	 */
 	double dot(const UMVector2 &v) const {
 		return (x*v.x + y*v.y);
+	}
+
+	/**
+	 * get normalized
+	 */
+	UMVector2 normalized() {
+		UMVector2 dst(*this);
+		T a = x * x + y * y;
+		if (a > std::numeric_limits<T>::epsilon()) {
+			T b = static_cast<T>(1.0 / sqrt(a));
+			dst.x = x * b;
+			dst.y = y * b;
+		} else {
+			dst.x = dst.y = static_cast<T>(0);
+		}
+		return dst;
 	}
 };
 
@@ -201,7 +221,7 @@ public:
 	 * minus
 	 */
 	UMVector3 operator - () const {
-		return UMVector3(v.x, v.y, v.z);
+		return UMVector3(-x, -y, -z);
 	}
 	
 	/**
@@ -232,6 +252,23 @@ public:
 	 */
 	double dot(const UMVector3 &v) const {
 		return (x*v.x + y*v.y + z*v.z);
+	}
+
+	/**
+	 * get normalized
+	 */
+	UMVector3 normalized() {
+		UMVector3 dst(*this);
+		T a = x * x + y * y + z * z;
+		if (a > std::numeric_limits<T>::epsilon()) {
+			T b = static_cast<T>(1.0 / sqrt(a));
+			dst.x = x * b;
+			dst.y = y * b;
+			dst.z = z * b;
+		} else {
+			dst.x = dst.y = dst.z = static_cast<T>(0);
+		}
+		return dst;
 	}
 };
 
@@ -314,7 +351,7 @@ public:
 	 * minus
 	 */
 	UMVector4 operator - () const {
-		return UMVector4(v.x, v.y, v.z, v.w);
+		return UMVector4(-x, -y, -z, -w);
 	}
 
 	/**
@@ -345,6 +382,24 @@ public:
 	 */
 	double dot(const UMVector4 &v) const {
 		return (x*v.x + y*v.y + z*v.z + w*v.w);
+	}
+
+	/**
+	 * get normalized
+	 */
+	UMVector4 normalized() {
+		UMVector4 dst(*this);
+		T a = x * x + y * y + z * z + w * w;
+		if (a > std::numeric_limits<T>::epsilon()) {
+			T b = static_cast<T>(1.0 / sqrt(a));
+			dst.x = x * b;
+			dst.y = y * b;
+			dst.z = z * b;
+			dst.w = w * b;
+		} else {
+			dst.x = dst.y = dst.z = dst.w = static_cast<T>(0);
+		}
+		return dst;
 	}
 };
 

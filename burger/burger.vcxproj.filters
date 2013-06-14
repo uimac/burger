@@ -11,6 +11,9 @@
     <Filter Include="src\data">
       <UniqueIdentifier>{46e4d502-7459-489e-aaf8-b5a6c2c71385}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\image">
+      <UniqueIdentifier>{af7ce0b2-50b5-4d4b-95d8-27f563008ace}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\UMMain.cpp">
@@ -26,7 +29,7 @@
       <Filter>src\data</Filter>
     </ClCompile>
     <ClCompile Include="..\src\UMTga.cpp">
-      <Filter>src</Filter>
+      <Filter>src\image</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,10 +67,10 @@
       <Filter>src\data</Filter>
     </ClInclude>
     <ClInclude Include="..\src\UMTga.h">
-      <Filter>src</Filter>
+      <Filter>src\image</Filter>
     </ClInclude>
     <ClInclude Include="..\src\UMImage.h">
-      <Filter>src</Filter>
+      <Filter>src\image</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

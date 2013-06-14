@@ -22,6 +22,16 @@ public:
 	 * distance
 	 */
 	double distance;
+
+	/**
+	 * normal
+	 */
+	UMVec3d normal;
+
+	/**
+	 * intersect point
+	 */
+	UMVec3d intersect_point;
 };
 
 } // burger

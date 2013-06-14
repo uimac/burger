@@ -35,6 +35,8 @@ bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 		// hit
 		parameter.color = color_;
 		parameter.distance = distance;
+		parameter.intersect_point = ray_orig + ray_dir * distance;
+		parameter.normal = (parameter.intersect_point - center_) / radius_;
 		return true;
 	}
 
@@ -43,6 +45,8 @@ bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 		// hit
 		parameter.color = color_;
 		parameter.distance = distance;
+		parameter.intersect_point = ray_orig + ray_dir * distance;
+		parameter.normal = (parameter.intersect_point - center_) / radius_;
 		return true;
 	}
 

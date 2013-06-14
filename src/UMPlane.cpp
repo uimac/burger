@@ -16,6 +16,9 @@ namespace burger
  */
 bool UMPlane::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 {
+	UMVec3d ray_dir(ray.direction());
+	UMVec3d ray_orig(ray.origin());
+
 	double angle = normal_.dot(ray.direction());
 	if (fabs(angle) < DBL_EPSILON) {
 		// ray is parallel
@@ -28,8 +31,10 @@ bool UMPlane::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 		return false;
 	}
 	
-	parameter.color = UMVec3d(1.0, 0, 0);
+	parameter.color = color_;
 	parameter.distance = distance;
+	parameter.intersect_point = ray_orig + ray_dir * distance;
+	parameter.normal = normal_;
 
 	return true;
 }
