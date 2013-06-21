@@ -1,6 +1,9 @@
-/// UMBufferObject.h ///
+/**
+ * @file UMModelObject.h
+ */
 #pragma once
 
+#include "UMMacro.h"
 #include "UMVector.h"
 
 #include <vector>
@@ -8,7 +11,9 @@
 namespace burger
 {
 
+/*
 class UMModelObject {
+	DISALLOW_COPY_AND_ASSIGN(UMModelObject);
 public:
 	UMModelObject() {}
 	virtual ~UMModelObject() {}
@@ -40,5 +45,6 @@ private:
 	IndexList uv_index_buffer_;
 	
 };
+*/
 
 } //burger

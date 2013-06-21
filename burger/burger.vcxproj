@@ -27,26 +27,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\UMMain.cpp" />
-    <ClCompile Include="..\src\UMPlane.cpp" />
-    <ClCompile Include="..\src\UMRaytracer.cpp" />
-    <ClCompile Include="..\src\UMSphere.cpp" />
-    <ClCompile Include="..\src\UMTga.cpp" />
+    <ClCompile Include="..\src\burger\UMMain.cpp" />
+    <ClCompile Include="..\src\burger\UMPlane.cpp" />
+    <ClCompile Include="..\src\burger\UMRaytracer.cpp" />
+    <ClCompile Include="..\src\burger\UMScene.cpp" />
+    <ClCompile Include="..\src\burger\UMSphere.cpp" />
+    <ClCompile Include="..\src\burger\UMTga.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\UMImage.h" />
-    <ClInclude Include="..\src\UMModelObject.h" />
-    <ClInclude Include="..\src\UMPlane.h" />
-    <ClInclude Include="..\src\UMPrimitive.h" />
-    <ClInclude Include="..\src\UMRay.h" />
-    <ClInclude Include="..\src\UMRaytracer.h" />
-    <ClInclude Include="..\src\UMRenderer.h" />
-    <ClInclude Include="..\src\UMRenderParameter.h" />
-    <ClInclude Include="..\src\UMScene.h" />
-    <ClInclude Include="..\src\UMShaderParameter.h" />
-    <ClInclude Include="..\src\UMSphere.h" />
-    <ClInclude Include="..\src\UMTga.h" />
-    <ClInclude Include="..\src\UMVector.h" />
+    <ClInclude Include="..\src\burger\UMImage.h" />
+    <ClInclude Include="..\src\burger\UMMacro.h" />
+    <ClInclude Include="..\src\burger\UMModelObject.h" />
+    <ClInclude Include="..\src\burger\UMPlane.h" />
+    <ClInclude Include="..\src\burger\UMPrimitive.h" />
+    <ClInclude Include="..\src\burger\UMRay.h" />
+    <ClInclude Include="..\src\burger\UMRaytracer.h" />
+    <ClInclude Include="..\src\burger\UMRenderer.h" />
+    <ClInclude Include="..\src\burger\UMRenderParameter.h" />
+    <ClInclude Include="..\src\burger\UMScene.h" />
+    <ClInclude Include="..\src\burger\UMShaderParameter.h" />
+    <ClInclude Include="..\src\burger\UMSphere.h" />
+    <ClInclude Include="..\src\burger\UMTga.h" />
+    <ClInclude Include="..\src\burger\UMVector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{908C6DDB-185C-47B4-BAD9-2884F0AD8B72}</ProjectGuid>
@@ -54,7 +56,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
@@ -65,13 +67,13 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -84,7 +86,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>

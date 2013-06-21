@@ -1,6 +1,10 @@
-/// UMRay.h ///
+/**
+ * @file UMRay.h
+ * a ray
+ */
 #pragma once
 
+#include "UMMacro.h"
 #include "UMVector.h"
 
 namespace burger
@@ -11,11 +15,17 @@ namespace burger
  */
 class UMRay
 {
+	DISALLOW_COPY_AND_ASSIGN(UMRay);
+
 public:
 	UMRay() :
 		origin_(0),
 		direction_(0) {}
-
+	
+	/**
+	 * @param [in] origin origin
+	 * @param [in] direction direction
+	 */
 	UMRay(const UMVec3d& origin, const UMVec3d& direction) :
 		origin_(origin),
 		direction_(direction) {}
@@ -29,7 +39,7 @@ public:
 	
 	/**
 	 * set origin
-	 * @parameter [in] direction source origin
+	 * @param [in] origin source origin
 	 */
 	void set_origin(const UMVec3d& origin) { origin_ = origin; }
 
@@ -40,7 +50,7 @@ public:
 	
 	/**
 	 * set direction
-	 * @parameter [in] direction source direction
+	 * @param [in] direction source direction
 	 */
 	void set_direction(const UMVec3d& direction) { direction_ = direction; }
 

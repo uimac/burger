@@ -1,4 +1,7 @@
-/// UMPlane.h ///
+/**
+ * @file UMPlane.cpp
+ * a plane
+ */
 #include "UMPlane.h"
 #include "UMVector.h"
 #include "UMRay.h"

@@ -1,7 +1,11 @@
-/// UMRenderer.h ///
+/**
+ * @file UMRenderer.h
+ * an interface of renderer
+ */
 #pragma once
 
 #include <memory>
+#include "UMMacro.h"
 
 namespace burger
 {
@@ -17,12 +21,18 @@ class UMRenderParameter;
  */
 class UMRenderer
 {
+	DISALLOW_COPY_AND_ASSIGN(UMRenderer);
 public:
+	/**
+	 * renderer types
+	 */
 	enum RendererType {
-		eRaytraceRenderer
+		eRaytraceRenderer,
+		eDirectX11Renderer
 	};
-
+	
 	UMRenderer() : width_(0), height_(0) {}
+	
 	~UMRenderer() {}
 	
 	/**
@@ -39,7 +49,7 @@ public:
 	/**
 	 * render
 	 * @param [in] scene target scene
-	 * @param [in|out] parameter parameters for rendering
+	 * @param [in,out] parameter parameters for rendering
 	 */
 	virtual bool render(const UMScene& scene, UMRenderParameter& parameter) = 0;
 	

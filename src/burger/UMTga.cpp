@@ -1,4 +1,7 @@
-/// UMTga.h ///
+/**
+ * @file UMTga.cpp
+ * TGA IO
+ */
 #pragma once
 
 #include "UMTga.h"

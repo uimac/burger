@@ -1,22 +1,33 @@
-/// UMImage.h ///
+/**
+ * @file UMImage.h
+ * Image
+ */
 #pragma once
 
 #include <vector>
+#include "UMMacro.h"
 #include "UMVector.h"
 
 namespace burger
 {
 
 /**
- * rendering parameters
+ * Image
  */
 class UMImage
 {
+	DISALLOW_COPY_AND_ASSIGN(UMImage);
 public:
 	typedef std::vector<UMVec3d> ImageBuffer;
-
+	
 	UMImage() : width_(0), height_(0) {}
+	
+	/**
+	 * @param [in] width the pixel width
+	 * @param [in] height the pixels height
+	 */
 	UMImage(int width, int height) : width_(width), height_(height) {}
+	
 	~UMImage() {}
 
 	/**

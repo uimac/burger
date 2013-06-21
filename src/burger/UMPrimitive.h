@@ -1,7 +1,11 @@
-/// UMPrimitive.h ///
+/**
+ * @file UMPrimitive.h
+ * interface of primitive
+ */
 #pragma once
 
 #include <memory>
+#include "UMMacro.h"
 
 namespace burger
 {
@@ -12,8 +16,13 @@ typedef std::shared_ptr<UMPrimitive> UMPrimitivePtr;
 class UMRay;
 class UMShaderParameter;
 
+/**
+ * interface of primitive
+ */
 class UMPrimitive
 {
+	DISALLOW_COPY_AND_ASSIGN(UMPrimitive);
+
 public:
 	UMPrimitive() {}
 	~UMPrimitive() {}
@@ -21,7 +30,7 @@ public:
 	/**
 	 * ray intersection
 	 * @param [in] ray a ray
-	 * @param [in|out] parameter shading parameters
+	 * @param [in,out] param shading parameters
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& param) const = 0;
 };

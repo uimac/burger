@@ -1,4 +1,7 @@
-/// UMVector.h ///
+/**
+ * @file UMVector.h
+ * vector
+ */
 #pragma once
 
 #include <cmath>
@@ -72,7 +75,7 @@ public:
 	 * compare not equal
 	 */
 	bool operator != (const UMVector2 &v) const {
-		return !(*this == v)
+		return !(*this == v);
 	}
 	
 	/**
@@ -197,7 +200,7 @@ public:
 	 * compare not equal
 	 */
 	bool operator != (const UMVector3 &v) const {
-		return !(*this == v)
+		return !(*this == v);
 	}
 	
 	/**
@@ -326,7 +329,7 @@ public:
 	 * compare not equal
 	 */
 	bool operator != (const UMVector4 &v) const {
-		return !(*this == v)
+		return !(*this == v);
 	}
 	
 	/**

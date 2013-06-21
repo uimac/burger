@@ -1,6 +1,10 @@
-/// UMPlane.h ///
+/**
+ * @file UMPlane.h
+ * a plane
+ */
 #pragma once
 
+#include "UMMacro.h"
 #include "UMPrimitive.h"
 #include "UMVector.h"
 
@@ -18,17 +22,22 @@ class UMShaderParameter;
  */
 class UMPlane : public UMPrimitive
 {
+	DISALLOW_COPY_AND_ASSIGN(UMPlane);
 public:
 	UMPlane() :
 		point_(0),
 		normal_(0, 1, 0),
 		color_(0){}
 
+	/**
+	 * @param [in] point center point
+	 * @param [in] normal normal
+	 */
 	UMPlane(const UMVec3d& point, const UMVec3d& normal) :
 		point_(point),
 		normal_(normal),
 		color_(0){}
-
+	
 	~UMPlane() {}
 
 	/**
@@ -62,7 +71,7 @@ public:
 	/**
 	 * ray plane intersection
 	 * @param [in] ray a ray
-	 * @param [in|out] parameter shading parameters
+	 * @param [in,out] parameter shading parameters
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& parameter) const;
 

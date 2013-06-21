@@ -14,63 +14,72 @@
     <Filter Include="src\image">
       <UniqueIdentifier>{af7ce0b2-50b5-4d4b-95d8-27f563008ace}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\raytrace_render">
+      <UniqueIdentifier>{ea58cbfc-f69f-4033-baac-825fb2b20eca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\UMMain.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src\burger\UMRaytracer.cpp">
+      <Filter>src\raytrace_render</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\UMRaytracer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\UMSphere.cpp">
-      <Filter>src\data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\UMPlane.cpp">
-      <Filter>src\data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\UMTga.cpp">
+    <ClCompile Include="..\src\burger\UMTga.cpp">
       <Filter>src\image</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger\UMPlane.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMSphere.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMMain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\UMRenderer.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\src\burger\UMRaytracer.h">
+      <Filter>src\raytrace_render</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\UMVector.h">
+    <ClInclude Include="..\src\burger\UMVector.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\UMModelObject.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMRay.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMPlane.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMSphere.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMShaderParameter.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMRenderParameter.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMRaytracer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMPrimitive.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UMTga.h">
+    <ClInclude Include="..\src\burger\UMImage.h">
       <Filter>src\image</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\UMImage.h">
+    <ClInclude Include="..\src\burger\UMTga.h">
       <Filter>src\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMModelObject.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMPlane.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMPrimitive.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRay.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMSphere.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRenderParameter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMShaderParameter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRenderer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMacro.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

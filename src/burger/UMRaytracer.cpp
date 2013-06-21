@@ -1,4 +1,7 @@
-/// UMRaytracer.cpp ///
+/**
+ * @file UMRaytracer.cpp
+ * a raytracer
+ */
 #include "UMRaytracer.h"
 #include "UMRenderParameter.h"
 #include "UMShaderParameter.h"

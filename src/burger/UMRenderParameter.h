@@ -1,8 +1,11 @@
-/// UMRenderParameter.h ///
+/**
+ * @file UMRenderParameter.h
+ * rendering parameters
+ */
 #pragma once
 
 #include <vector>
-
+#include "UMMacro.h"
 #include "UMImage.h"
 #include "UMVector.h"
 
@@ -14,8 +17,8 @@ namespace burger
  */
 class UMRenderParameter
 {
+	DISALLOW_COPY_AND_ASSIGN(UMRenderParameter);
 public:
-
 	UMRenderParameter() {}
 	~UMRenderParameter() {}
 

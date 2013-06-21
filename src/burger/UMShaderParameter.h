@@ -1,5 +1,10 @@
-/// UMShaderParameter.h ///
+/**
+ * @file UMShaderParameter.h
+ * shading parameters
+ */
 #pragma once
+
+#include "UMMacro.h"
 
 namespace burger
 {
@@ -9,6 +14,7 @@ namespace burger
  */
 class UMShaderParameter
 {
+	DISALLOW_COPY_AND_ASSIGN(UMShaderParameter);
 public:
 	UMShaderParameter() {}
 	~UMShaderParameter() {}

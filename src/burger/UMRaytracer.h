@@ -1,8 +1,12 @@
-/// UMRaytracer.h ///
+/**
+ * @file UMRaytracer.h
+ * a raytracer
+ */
 #pragma once
 
 #include <memory>
 #include <vector>
+#include "UMMacro.h"
 #include "UMRenderer.h"
 #include "UMVector.h"
 
@@ -21,6 +25,7 @@ class UMShaderParameter;
  */
 class UMRaytracer : public UMRenderer
 {
+	DISALLOW_COPY_AND_ASSIGN(UMRaytracer);
 public:
 	UMRaytracer() {}
 	~UMRaytracer() {}
@@ -39,7 +44,7 @@ public:
 	/**
 	 * render
 	 * @param [in] scene target scene
-	 * @param [in|out] parameter parameters for rendering
+	 * @param [in,out] parameter parameters for rendering
 	 */
 	virtual bool render(const UMScene& scene, UMRenderParameter& parameter);
 };

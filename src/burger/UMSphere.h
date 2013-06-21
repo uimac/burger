@@ -1,4 +1,7 @@
-/// UMSphere.h ///
+/**
+ * @file UMSphere.h
+ * a sphere
+ */
 #pragma once
 
 #include <memory>
@@ -19,17 +22,22 @@ class UMShaderParameter;
  */
 class UMSphere : public UMPrimitive
 {
+	DISALLOW_COPY_AND_ASSIGN(UMSphere);
 public:
 	UMSphere() :
 		center_(0),
 		radius_(0),
 		color_(0) {}
-
+	
+	/**
+	 * @param [in] center center
+	 * @param [in] radius radius
+	 */
 	UMSphere(const UMVec3d& center, double radius) :
 		center_(center),
 		radius_(radius),
 		color_(0) {}
-
+	
 	~UMSphere() {}
 	
 	/**
@@ -63,7 +71,7 @@ public:
 	/**
 	 * ray sphere intersection
 	 * @param [in] ray a ray
-	 * @param [in|out] parameter shading parameters
+	 * @param [in,out] parameter shading parameters
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& param) const;
 

@@ -1,4 +1,7 @@
-/// UMSphere.cpp ///
+/**
+ * @file UMSphere.cpp
+ * a sphere
+ */
 #include "UMSphere.h"
 #include "UMVector.h"
 #include "UMRay.h"
