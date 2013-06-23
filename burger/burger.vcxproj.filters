@@ -37,6 +37,9 @@
     <ClCompile Include="..\src\burger\UMScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger\UMImage.cpp">
+      <Filter>src\image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\burger\UMRaytracer.h">
@@ -80,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="..\src\burger\UMMacro.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMatrix.h">
+      <Filter>src\math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,54 +34,9 @@ public:
 		hs, /// hull shader
 	};
 
-	UMDirectX11Shader() 
-		: feature_level_(D3D_FEATURE_LEVEL_9_1),
-		input_layout_pointer_(NULL),
-		blob_pointer_(NULL),
-		vertex_shader_pointer_(NULL),
-		pixel_shader_pointer_(NULL),
-		compute_shader_pointer_(NULL),
-		domain_shader_pointer_(NULL),
-		hull_shader_pointer_(NULL)
-	{}
+	UMDirectX11Shader();
 
-	~UMDirectX11Shader() {
-		if (input_layout_pointer_)
-		{
-			input_layout_pointer_->Release();
-			input_layout_pointer_ = NULL;
-		}
-		if (blob_pointer_)
-		{
-			blob_pointer_->Release();
-			blob_pointer_ = NULL;
-		}
-		if (vertex_shader_pointer_)
-		{
-			vertex_shader_pointer_->Release();
-			vertex_shader_pointer_ = NULL;
-		}
-		if (pixel_shader_pointer_)
-		{
-			pixel_shader_pointer_->Release();
-			pixel_shader_pointer_ = NULL;
-		}
-		if (compute_shader_pointer_)
-		{
-			compute_shader_pointer_->Release();
-			compute_shader_pointer_ = NULL;
-		}
-		if (domain_shader_pointer_)
-		{
-			domain_shader_pointer_->Release();
-			domain_shader_pointer_ = NULL;
-		}
-		if (hull_shader_pointer_)
-		{
-			hull_shader_pointer_->Release();
-			hull_shader_pointer_ = NULL;
-		}
-	}
+	~UMDirectX11Shader();
 
 	/**
 	 * create shader from string

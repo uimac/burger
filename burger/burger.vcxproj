@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\burger\UMImage.cpp" />
     <ClCompile Include="..\src\burger\UMMain.cpp" />
     <ClCompile Include="..\src\burger\UMPlane.cpp" />
     <ClCompile Include="..\src\burger\UMRaytracer.cpp" />
@@ -37,6 +38,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\burger\UMImage.h" />
     <ClInclude Include="..\src\burger\UMMacro.h" />
+    <ClInclude Include="..\src\burger\UMMatrix.h" />
     <ClInclude Include="..\src\burger\UMModelObject.h" />
     <ClInclude Include="..\src\burger\UMPlane.h" />
     <ClInclude Include="..\src\burger\UMPrimitive.h" />

@@ -43,9 +43,61 @@ namespace
 namespace burger
 {
 
+/// constructor
+UMDirectX11Shader::UMDirectX11Shader()
+	: feature_level_(D3D_FEATURE_LEVEL_9_1),
+	input_layout_pointer_(NULL),
+	blob_pointer_(NULL),
+	vertex_shader_pointer_(NULL),
+	pixel_shader_pointer_(NULL),
+	compute_shader_pointer_(NULL),
+	domain_shader_pointer_(NULL),
+	hull_shader_pointer_(NULL)
+	{}
+
+/// destructor
+UMDirectX11Shader::~UMDirectX11Shader()
+	{
+	if (input_layout_pointer_)
+	{
+		input_layout_pointer_->Release();
+		input_layout_pointer_ = NULL;
+	}
+	if (blob_pointer_)
+	{
+		blob_pointer_->Release();
+		blob_pointer_ = NULL;
+	}
+	if (vertex_shader_pointer_)
+	{
+		vertex_shader_pointer_->Release();
+		vertex_shader_pointer_ = NULL;
+	}
+	if (pixel_shader_pointer_)
+	{
+		pixel_shader_pointer_->Release();
+		pixel_shader_pointer_ = NULL;
+	}
+	if (compute_shader_pointer_)
+	{
+		compute_shader_pointer_->Release();
+		compute_shader_pointer_ = NULL;
+	}
+	if (domain_shader_pointer_)
+	{
+		domain_shader_pointer_->Release();
+		domain_shader_pointer_ = NULL;
+	}
+	if (hull_shader_pointer_)
+	{
+		hull_shader_pointer_->Release();
+		hull_shader_pointer_ = NULL;
+	}
+}
+
 /**
-	* get valid shader version
-	*/
+ * get valid shader version
+ */
 const std::string& UMDirectX11Shader::get_valid_shader_version(UMDirectX11Shader::ShaderType type) const
 {
 	D3D_FEATURE_LEVEL level = feature_level_;
@@ -224,15 +276,30 @@ ID3D11InputLayout* UMDirectX11Shader::create_input_layout(ID3D11Device *device_p
 {
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	device_pointer->CreateInputLayout(
+	if FAILED(device_pointer->CreateInputLayout(
 		layout, 
 		_countof(layout), 
 		buffer_pointer(), 
 		buffer_size(), 
-		&input_layout_pointer_);
+		&input_layout_pointer_))
+	{
+		return NULL;
+	}
+	
+	if (input_layout_pointer_)
+	{
+		// set layout to device context
+		ID3D11DeviceContext* device_context(NULL);
+		device_pointer->GetImmediateContext(&device_context);
+		if (device_context)
+		{
+			device_context->IASetInputLayout(input_layout_pointer_);
+		}
+		device_context->Release();
+	}
 
 	return input_layout_pointer_;
 }

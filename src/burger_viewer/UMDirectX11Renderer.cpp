@@ -8,7 +8,7 @@ namespace burger
 {
 
 UMDirectX11Renderer::UMDirectX11Renderer(ID3D11Device *device_pointer)
-	: shader_manager_(std::make_shared<UMDirectX11ShaderManager>(device_pointer)),
+	: shader_manager_(std::make_shared<UMDirectX11ShaderManager>()),
 	device_pointer_(device_pointer)
 {}
 

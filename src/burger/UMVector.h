@@ -88,7 +88,7 @@ public:
 	/**
 	 * plus equal
 	 */
-	UMVector2 operator + (const UMVector2 &v) {
+	UMVector2 operator += (const UMVector2 &v) {
 		x += v.x;
 		y += v.y;
 		return *this;
@@ -342,7 +342,7 @@ public:
 	/**
 	 * plus equal
 	 */
-	UMVector4 operator += (const UMVector4 &v) const {
+	UMVector4 operator += (const UMVector4 &v) {
 		x += v.x;
 		y += v.y;
 		z += v.z;

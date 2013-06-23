@@ -8,9 +8,28 @@
 namespace burger
 {
 
-UMDirectX11ShaderManager::UMDirectX11ShaderManager(ID3D11Device *device_pointer)
+/// constructer
+UMDirectX11ShaderManager::UMDirectX11ShaderManager()
 {
-	feature_level_ = device_pointer->GetFeatureLevel();
+}
+
+/// destructor
+UMDirectX11ShaderManager::~UMDirectX11ShaderManager()
+{
+	for (size_t i = 0, size = constant_buffer_list_.size(); i < size; ++i) {
+		if (constant_buffer_list_[i]) { 
+			constant_buffer_list_[i]->Release();
+		}
+	}
+	constant_buffer_list_.clear();
+}
+
+/**
+ * initialize
+ */
+bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer)
+{
+	if (!device_pointer) return false;
 	
 	// create contant buffers
 	D3D11_BUFFER_DESC buffer_desc;
@@ -23,9 +42,9 @@ UMDirectX11ShaderManager::UMDirectX11ShaderManager(ID3D11Device *device_pointer)
 	
 	ID3D11Buffer *buffer = NULL;
 
-	HRESULT hr = device_pointer->CreateBuffer(&buffer_desc, NULL, &buffer);
-	if (FAILED(hr)) {
-
+	if FAILED(device_pointer->CreateBuffer(&buffer_desc, NULL, &buffer))
+	{
+		return false;
 	}
 	constant_buffer_list_.push_back(buffer);
 
@@ -45,13 +64,17 @@ UMDirectX11ShaderManager::UMDirectX11ShaderManager(ID3D11Device *device_pointer)
 
 		std::wstring vs_path = path + std::wstring(_T("\\default_vs.hlsl"));
 
-		shader->create_shader_from_file(
+		if (shader->create_shader_from_file(
 			device_pointer,
 			vs_path.c_str(), 
 			"VS_Main", 
-			UMDirectX11Shader::vs);
-		
-		mutable_shader_list().push_back(shader);
+			UMDirectX11Shader::vs))
+		{
+			// create input layout
+			shader->create_input_layout(device_pointer);
+			// save shader
+			mutable_shader_list().push_back(shader);
+		}
 	}
 
 	// pixel shader
@@ -60,14 +83,18 @@ UMDirectX11ShaderManager::UMDirectX11ShaderManager(ID3D11Device *device_pointer)
 
 		std::wstring ps_path = path + std::wstring(_T("\\default_ps.hlsl"));
 
-		shader->create_shader_from_file(
+		if (shader->create_shader_from_file(
 			device_pointer,
 			ps_path.c_str(), 
 			"PS_Main", 
-			UMDirectX11Shader::ps);
-
-		mutable_shader_list().push_back(shader);
+			UMDirectX11Shader::ps))
+		{
+			// save shader
+			mutable_shader_list().push_back(shader);
+		}
 	}
+
+	return true;
 }
 
 } // burger

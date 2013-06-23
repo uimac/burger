@@ -28,6 +28,12 @@
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Viewer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMTime.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Board.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\burger_viewer\UMDirectX11BufferObject.h">
@@ -46,6 +52,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Viewer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMTime.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMStringUtil.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Board.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

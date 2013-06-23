@@ -14,4 +14,9 @@ namespace burger
 	private: TypeName(const TypeName&); \
 	void operator=(const TypeName&)
 
+/**
+ * for directx com release
+ */
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+
 } // burger

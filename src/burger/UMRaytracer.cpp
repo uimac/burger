@@ -71,7 +71,8 @@ bool UMRaytracer::render(const UMScene& scene, UMRenderParameter& parameter)
 		for (int x = 0; x < width_; ++x)
 		{
 			ray.set_direction(UMVec3d( x - half_width, y - half_height, 256).normalized());
-			buffer[width_ * y + x] = trace(ray, scene, shader_param);
+			UMVec3d color = trace(ray, scene, shader_param);
+			buffer[width_ * y + x] = UMVec4d(color.x, color.y, color.z, 1.0);
 		}
 	}
 	

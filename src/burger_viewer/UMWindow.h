@@ -35,7 +35,7 @@ public:
 	int win_proc(HWND hWnd, unsigned int msg, WPARAM wParam, LPARAM lParam);
 
 private:
-	UMWindow() : width_(1024), height_(768) {}
+	UMWindow() : width_(1280), height_(720) {}
 
 	/// initial client width
 	int width_;

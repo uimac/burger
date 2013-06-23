@@ -26,20 +26,17 @@ public:
 	typedef std::vector<UMDirectX11ShaderPtr> ShaderList;
 	typedef std::vector<ID3D11Buffer*> BufferPointerList;
 
+
+	UMDirectX11ShaderManager();
+
+	~UMDirectX11ShaderManager();
+	
 	/**
+	 * initialize
 	 * @param [in] device_pointer directx11 device
 	 */
-	UMDirectX11ShaderManager(ID3D11Device *device_pointer) ;
+	bool init(ID3D11Device *device_pointer);
 
-	~UMDirectX11ShaderManager() {
-		for (size_t i = 0, size = constant_buffer_list_.size(); i < size; ++i) {
-			if (constant_buffer_list_[i]) { 
-				constant_buffer_list_[i]->Release();
-			}
-		}
-		constant_buffer_list_.clear();
-	}
-	
 	/**
 	 * get feature level
 	 */

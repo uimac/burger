@@ -51,20 +51,9 @@ bool UMTga::save(const std::string& path, const UMImage& image) const
 		ofs.write(reinterpret_cast<const char*>(header), 18);
 
 		// floating image to 8bit rgb
-		const double inv_gamma = 1.0 / 2.2;
-		std::vector<unsigned char> img;
-		img.resize(image.width() * image.height() * 3);
-		for (int y = 0; y < image.height(); ++y)
-		{
-			for (int x = 0; x < image.width(); ++x)
-			{
-				int pos = image.width() * y + x;
-				const UMVec3d col = image.buffer().at(pos);
-				img[pos * 3 + 0] = static_cast<int>(pow(col.z, inv_gamma) * 0xFF + 0.5);
-				img[pos * 3 + 1] = static_cast<int>(pow(col.y, inv_gamma) * 0xFF + 0.5);
-				img[pos * 3 + 2] = static_cast<int>(pow(col.x, inv_gamma) * 0xFF + 0.5);
-			}
-		}
+		UMImage::B8G8R8Buffer img;
+		image.create_b8g8r8_buffer(img);
+
 		ofs.write(reinterpret_cast<const char*>(&(*img.begin())), img.size());
 
 		// footer

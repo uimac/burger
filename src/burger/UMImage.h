@@ -18,7 +18,9 @@ class UMImage
 {
 	DISALLOW_COPY_AND_ASSIGN(UMImage);
 public:
-	typedef std::vector<UMVec3d> ImageBuffer;
+	typedef std::vector<UMVec4d> ImageBuffer;
+	typedef std::vector<unsigned char> R8G8B8A8Buffer;
+	typedef std::vector<unsigned char> B8G8R8Buffer;
 	
 	UMImage() : width_(0), height_(0) {}
 	
@@ -38,7 +40,17 @@ public:
 	/**
 	 * get image buffer
 	 */
-	ImageBuffer&  mutable_buffer() { return buffer_; } 
+	ImageBuffer&  mutable_buffer() { return buffer_; }
+
+	/**
+	 * create r8g8b8a8 buffer
+	 */
+	void create_r8g8b8a8_buffer(R8G8B8A8Buffer& buffer) const;
+
+	/**
+	 * create r8g8b8 buffer
+	 */
+	void create_b8g8r8_buffer(B8G8R8Buffer& buffer) const;
 
 	/**
 	 * get width
