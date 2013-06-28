@@ -1,5 +1,11 @@
 /**
  * @file UMWindow.cpp
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #include "UMWindow.h"
 #include "UMDirectX11Viewer.h"

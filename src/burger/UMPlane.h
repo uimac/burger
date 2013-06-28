@@ -1,6 +1,12 @@
 /**
  * @file UMPlane.h
  * a plane
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #pragma once
 
@@ -74,6 +80,12 @@ public:
 	 * @param [in,out] parameter shading parameters
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& parameter) const;
+	
+	/**
+	 * ray sphere intersection
+	 * @param [in] ray a ray
+	 */
+	virtual bool intersects(const UMRay& ray) const;
 
 private:
 	UMVec3d point_;

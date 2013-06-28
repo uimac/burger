@@ -1,6 +1,12 @@
 /**
  * @file UMVector.h
  * vector
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #pragma once
 
@@ -109,11 +115,30 @@ public:
 	}
 	
 	/**
+	 * minus equal
+	 */
+	UMVector2 operator -= (const UMVector2 &v) {
+		x -= v.x;
+		y -= v.y;
+		return *this;
+	}
+	
+	/**
 	 * multiply scolor
 	 */
 	template <class U>
 	UMVector2 operator * (const U &s) const {
 		return UMVector2(x * s, y * s);
+	}
+	
+	/**
+	 * multiply equal
+	 */
+	template <class U>
+	UMVector2 operator *= (const U &s) {
+		x *= s;
+		y *= s;
+		return *this;
 	}
 
 	/**
@@ -122,6 +147,15 @@ public:
 	template <class U>
 	UMVector2 operator / (const U &s) const {
 		return (*this) * static_cast<U>(1 / s);
+	}
+
+	/**
+	 * divide equal
+	 */
+	template <class U>
+	UMVector2 operator /= (const U &s) {
+		(*this) *= static_cast<U>(1 / s);
+		return *this;
 	}
 	
 	/**
@@ -146,6 +180,21 @@ public:
 		}
 		return dst;
 	}
+	
+	/**
+	 * square of length
+	 */
+	T length_sq() const {
+		return x * x + y * y;
+	}
+
+	/**
+	 * length
+	 */
+	T length() const {
+		return sqrt(length_sq());
+	}
+
 };
 
 /**
@@ -235,11 +284,32 @@ public:
 	}
 	
 	/**
+	 * minus equal
+	 */
+	UMVector3 operator -= (const UMVector3 &v) {
+		x -= v.x;
+		y -= v.y;
+		z -= v.z;
+		return *this;
+	}
+
+	/**
 	 * multiply scolor
 	 */
 	template <class U>
 	UMVector3 operator * (const U &s) const {
 		return UMVector3(x * s, y * s, z * s);
+	}
+	
+	/**
+	 * multiply equal
+	 */
+	template <class U>
+	UMVector3 operator *= (const U &s) {
+		x *= s;
+		y *= s;
+		z *= s;
+		return *this;
 	}
 
 	/**
@@ -249,7 +319,16 @@ public:
 	UMVector3 operator / (const U &s) const {
 		return (*this) * static_cast<U>(1 / s);
 	}
-
+	
+	/**
+	 * divide equal
+	 */
+	template <class U>
+	UMVector3 operator /= (const U &s) {
+		(*this) *= static_cast<U>(1 / s);
+		return *this;
+	}
+	
 	/**
 	 * dot
 	 */
@@ -272,6 +351,20 @@ public:
 			dst.x = dst.y = dst.z = static_cast<T>(0);
 		}
 		return dst;
+	}
+	
+	/**
+	 * square of length
+	 */
+	T length_sq() const {
+		return x * x + y * y + z * z;
+	}
+
+	/**
+	 * length
+	 */
+	T length() const {
+		return sqrt(length_sq());
 	}
 };
 
@@ -363,13 +456,36 @@ public:
 	UMVector4 operator - (const UMVector4 &v) const {
 		return UMVector4(x - v.x, y - v.y, z - v.z, w - v.w);
 	}
+	
+	/**
+	 * minus equal
+	 */
+	UMVector4 operator -= (const UMVector4 &v) {
+		x -= v.x;
+		y -= v.y;
+		z -= v.z;
+		w -= v.w;
+		return *this;
+	}
 
 	/**
 	 * multiply scolor
 	 */
 	template <class U>
-	UMVector4 operator * (const UMVector4 &s) const {
+	UMVector4 operator * (const U &s) const {
 		return UMVector4(x * s, y * s, z * s, w * s);
+	}
+	
+	/**
+	 * multiply equal
+	 */
+	template <class U>
+	UMVector4 operator *= (const U &s) {
+		x *= s;
+		y *= s;
+		z *= s;
+		w *= s;
+		return *this;
 	}
 
 	/**
@@ -378,6 +494,15 @@ public:
 	template <class U>
 	UMVector4 operator / (const U &s) const {
 		return (*this) * static_cast<U>(1 / s);
+	}
+
+	/**
+	 * divide equal
+	 */
+	template <class U>
+	UMVector4 operator /= (const U &s) {
+		(*this) *= static_cast<U>(1 / s);
+		return *this;
 	}
 	
 	/**
@@ -403,6 +528,20 @@ public:
 			dst.x = dst.y = dst.z = dst.w = static_cast<T>(0);
 		}
 		return dst;
+	}
+
+	/**
+	 * square of length
+	 */
+	T length_sq() const {
+		return x * x + y * y + z * z + w * w;
+	}
+
+	/**
+	 * length
+	 */
+	T length() const {
+		return sqrt(length_sq());
 	}
 };
 

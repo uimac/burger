@@ -1,6 +1,12 @@
 /**
  * @file UMRaytracer.cpp
  * a raytracer
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #include "UMRaytracer.h"
 #include "UMRenderParameter.h"
@@ -24,6 +30,30 @@ namespace
 	}
 
 	/**
+	 * shading function
+	 */
+	UMVec3d shade(const UMPrimitivePtr current, const UMRay& ray, const UMScene& scene, UMShaderParameter& parameter)
+	{
+		UMVec3d light_position = UMVec3d(1000, 1000, -1000);
+		// shadow ray
+		UMVec3d shadow_dir = light_position - parameter.intersect_point;
+		UMRay shadow_ray(parameter.intersect_point, shadow_dir.normalized());
+		
+		UMScene::Primitives::const_iterator it = scene.primitives().begin();
+		for (; it != scene.primitives().end(); ++it)
+		{
+			const UMPrimitivePtr primitive = *it;
+			if (primitive == current) continue;
+			if (primitive->intersects(shadow_ray))
+			{
+				return UMVec3d(0);
+			}
+		}
+		UMVec3d light_dir = light_position.normalized();
+		return map_one(parameter.color * (parameter.normal.normalized().dot(light_dir)) * 0.5);
+	}
+
+	/**
 	 * trace and return color of the hit point
 	 */
 	UMVec3d trace(const UMRay& ray, const UMScene& scene, UMShaderParameter& parameter)
@@ -34,8 +64,7 @@ namespace
 			const UMPrimitivePtr primitive = *it;
 			if (primitive->intersects(ray, parameter))
 			{
-				// todo: separate to shading function
-				return map_one(parameter.color * (parameter.normal.normalized().dot(UMVec3d(1, 1, -1))) * 0.5);
+				return shade(primitive, ray, scene, parameter);
 			}
 		}
 		return scene.background_color();

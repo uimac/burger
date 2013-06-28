@@ -1,6 +1,12 @@
 /**
  * @file UMScene.cpp
  * 3D scene including many objects.
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #include "UMScene.h"
 
@@ -16,8 +22,8 @@ namespace burger
 void UMScene::create_sample_scene_1()
 {
 	UMSpherePtr sphere1(std::make_shared<UMSphere>(UMVec3d(0, 0, 0), 250.0));
-	UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(200, 0, 0), 200.0));
-	UMPlanePtr plane1(std::make_shared<UMPlane>(UMVec3d(0, -50, 0), UMVec3d(0, 1, 0)));
+	UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(500, 0, 200), 200.0));
+	UMPlanePtr plane1(std::make_shared<UMPlane>(UMVec3d(0, -250, 0), UMVec3d(0, 1, 0)));
 	sphere1->set_color(UMVec3d(1.0, 0.0, 0.0));
 	sphere2->set_color(UMVec3d(0.0, 0.0, 1.0));
 	plane1->set_color(UMVec3d(0.0, 1.0, 0.0));

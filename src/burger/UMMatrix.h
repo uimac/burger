@@ -1,5 +1,12 @@
 /**
  * @file UMMatrix.h
+ * Matrix
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #pragma once
 
@@ -75,7 +82,7 @@ public:
 	/**
 	 * assign
 	 */
-	const UMVector2& operator = (const UMMatrix44 &mat) {
+	const UMMatrix44& operator = (const UMMatrix44 &mat) {
 		for (int i = 0; i < 4; ++i) {
 			for (int k = 0; k < 4; ++k) {
 				m[i][k] = mat.m[i][k];

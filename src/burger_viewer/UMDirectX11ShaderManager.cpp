@@ -1,4 +1,12 @@
-
+/**
+ * @file UMDirectX11Shader.cpp
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
+ */
 #include "UMDirectX11ShaderManager.h"
 #include <d3dcompiler.h>
 #include <tchar.h>
@@ -55,7 +63,7 @@ bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer)
 	GetModuleFileName(NULL, path, sizeof(path) / sizeof(TCHAR));
 	PathRemoveFileSpec(path);
 	SetCurrentDirectory(path);
-	SetCurrentDirectory(_T("../../resource/"));
+	SetCurrentDirectory(_T("../../../resource/"));
 	GetCurrentDirectory(1024, path);
 
 	// vertex shader

@@ -1,6 +1,12 @@
 /**
  * @file UMPrimitive.h
  * interface of primitive
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #pragma once
 
@@ -33,6 +39,12 @@ public:
 	 * @param [in,out] param shading parameters
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& param) const = 0;
+	
+	/**
+	 * ray sphere intersection
+	 * @param [in] ray a ray
+	 */
+	virtual bool intersects(const UMRay& ray) const = 0;
 };
 
 } // burger

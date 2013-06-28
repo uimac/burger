@@ -1,5 +1,11 @@
 /**
  * @file UMDirectX11Renderer.cpp
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #include "UMDirectX11Renderer.h"
 #include "UMDirectX11ShaderManager.h"

@@ -1,5 +1,11 @@
 /**
  * @file UMDirectX11Viewer.cpp
+ *
+ * @author tori31001 at gmail.com
+ *
+ * Copyright (C) 2013 Kazuma Hatta
+ * Licensed  under the MIT license. 
+ *
  */
 #include "UMDirectX11Viewer.h"
 #include <shellapi.h>
@@ -169,7 +175,7 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 	}
 
 	// get dxgi adapter, factory
-	{		
+	{
 		// get IDXGIDevice from ID3D11Device
 		if FAILED(device_pointer_->QueryInterface( __uuidof(IDXGIDevice1), (void**)&dxgi_device_pointer_))
 		{
