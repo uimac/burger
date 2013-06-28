@@ -18,6 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\burger_test\UMMain.cpp" />
+    <ClCompile Include="..\src\burger_test\UMMatrixTest.cpp" />
+    <ClCompile Include="..\src\burger_test\UMVectorTest.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6C244169-969C-4E8C-91A6-D8A17116729A}</ProjectGuid>
     <RootNamespace>burger_test</RootNamespace>
@@ -145,11 +150,6 @@
       </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\burger_test\UMMain.cpp" />
-    <ClCompile Include="..\src\burger_test\UMMatrixTest.cpp" />
-    <ClCompile Include="..\src\burger_test\UMVectorTest.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

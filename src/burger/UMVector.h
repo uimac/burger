@@ -161,7 +161,7 @@ public:
 	/**
 	 * dot
 	 */
-	double dot(const UMVector2 &v) const {
+	T dot(const UMVector2 &v) const {
 		return (x*v.x + y*v.y);
 	}
 
@@ -332,7 +332,7 @@ public:
 	/**
 	 * dot
 	 */
-	double dot(const UMVector3 &v) const {
+	T dot(const UMVector3 &v) const {
 		return (x*v.x + y*v.y + z*v.z);
 	}
 
@@ -508,7 +508,7 @@ public:
 	/**
 	 * dot
 	 */
-	double dot(const UMVector4 &v) const {
+	T dot(const UMVector4 &v) const {
 		return (x*v.x + y*v.y + z*v.z + w*v.w);
 	}
 

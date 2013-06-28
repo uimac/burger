@@ -7,13 +7,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\burger_test\UMVectorTest.cpp">
+    <ClCompile Include="..\src\burger_test\UMMain.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\burger_test\UMMatrixTest.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\burger_test\UMMain.cpp">
+    <ClCompile Include="..\src\burger_test\UMVectorTest.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
