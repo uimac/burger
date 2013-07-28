@@ -68,8 +68,8 @@ bool UMDirectX11Renderer::render(const UMScene& scene, UMRenderParameter& parame
 	UINT index_count = 0;
 	UINT offset = 0;
 	for (size_t i = 0, size = objects.size(); i < size; ++i) {
-		device_context_pointer->IASetVertexBuffers(0, 1, objects[i].pp_vertex_buffer(), &stride, &offset);
-		device_context_pointer->IASetIndexBuffer(objects[i].p_index_buffer(), DXGI_FORMAT_R32_SINT, 0);
+		device_context_pointer->IASetVertexBuffers(0, 1, objects[i].pp_vertex_list(), &stride, &offset);
+		device_context_pointer->IASetIndexBuffer(objects[i].p_index_list(), DXGI_FORMAT_R32_SINT, 0);
 		index_count += objects[i].face_size() * 3;
 	}
 	*/

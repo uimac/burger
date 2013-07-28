@@ -41,7 +41,7 @@ public:
 	/**
 	 * get origin
 	 */
-	UMVec3d origin() const { return origin_; }
+	const UMVec3d& origin() const { return origin_; }
 	
 	/**
 	 * set origin
@@ -52,7 +52,7 @@ public:
 	/**
 	 * get direction
 	 */
-	UMVec3d direction() const { return direction_; }
+	const UMVec3d& direction() const { return direction_; }
 	
 	/**
 	 * set direction

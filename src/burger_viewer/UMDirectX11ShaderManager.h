@@ -32,6 +32,11 @@ public:
 	typedef std::vector<UMDirectX11ShaderPtr> ShaderList;
 	typedef std::vector<ID3D11Buffer*> BufferPointerList;
 
+	enum ShaderType {
+		eConstants,
+		eBoard,
+		eModel
+	};
 
 	UMDirectX11ShaderManager();
 
@@ -40,8 +45,9 @@ public:
 	/**
 	 * initialize
 	 * @param [in] device_pointer directx11 device
+	 * @param [in] type shader type
 	 */
-	bool init(ID3D11Device *device_pointer);
+	bool init(ID3D11Device *device_pointer, ShaderType type);
 
 	/**
 	 * get feature level
@@ -63,7 +69,25 @@ public:
 	 */
 	ShaderList& mutable_shader_list() { return shader_list_; }
 
+	/**
+	 * get input layout
+	 */
+	ID3D11InputLayout *input_layout_pointer() { return input_layout_pointer_; }
+
+	/**
+	 * create shader input layout
+	 * @param [in] device_pointer directx11 device]
+	 * @param [in] shader target vertex shader
+	 * @param [in] type shader type
+	 * @retval created ID3D11InputLayout
+	 */
+	ID3D11InputLayout *create_input_layout(
+		ID3D11Device *device_pointer, 
+		UMDirectX11ShaderPtr shader, 
+		ShaderType type);
+
 private:
+	ID3D11InputLayout *input_layout_pointer_;
 	D3D_FEATURE_LEVEL feature_level_;
 	ShaderList shader_list_;
 	BufferPointerList constant_buffer_list_;

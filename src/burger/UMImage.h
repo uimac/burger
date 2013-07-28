@@ -11,11 +11,15 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "UMMacro.h"
 #include "UMVector.h"
 
 namespace burger
 {
+
+class UMImage;
+typedef std::shared_ptr<UMImage> UMImagePtr;
 
 /**
  * Image
@@ -41,12 +45,12 @@ public:
 	/**
 	 * get image buffer
 	 */
-	const ImageBuffer& buffer() const { return buffer_; } 
+	const ImageBuffer& list() const { return buffer_; } 
 	
 	/**
 	 * get image buffer
 	 */
-	ImageBuffer&  mutable_buffer() { return buffer_; }
+	ImageBuffer&  mutable_list() { return buffer_; }
 
 	/**
 	 * create r8g8b8a8 buffer
@@ -57,6 +61,11 @@ public:
 	 * create r8g8b8 buffer
 	 */
 	void create_b8g8r8_buffer(B8G8R8Buffer& buffer) const;
+
+	/**
+	 * clear image buffer
+	 */
+	void clear();
 
 	/**
 	 * get width
@@ -82,8 +91,17 @@ public:
 
 	/**
 	 * validate image
+	 * @retval valid or invalid
 	 */
-	bool is_validate() const { return (width_ * height_ == static_cast<int>(buffer_.size())); }
+	bool is_valid() const { return (width_ * height_ == static_cast<int>(buffer_.size())); }
+
+	/**
+	 * create flip image
+	 * @param [in] horizon flip horizontal
+	 * @param [in] vertical flip vertical
+	 * @retval filpped image
+	 */
+	UMImagePtr create_flip_image(bool horizon, bool vertical) const;
 
 private:
 	int width_;

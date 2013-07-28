@@ -127,7 +127,7 @@ public:
 	
 	UMIOSetting()
 	{
-		bl_imp_prop_map_[eUMImpFBX]				= true;
+		bl_imp_prop_map_[eUMImpFBX]				= false;
 		bl_exp_prop_map_[eUMExpFBX]				= true;
 
 		imp_prop_map_[eImpFbxMaterial]			= true;

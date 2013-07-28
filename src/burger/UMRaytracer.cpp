@@ -15,11 +15,15 @@
 #include "UMScene.h"
 #include "UMVector.h"
 
+#include <limits>
 #include <algorithm>
 
 namespace
 {
 	using namespace burger;
+
+	// definition
+	UMVec3d trace(const UMRay& ray, const UMScene& scene, UMShaderParameter& parameter);
 
 	UMVec3d map_one(UMVec3d src) {
 		double max = std::max(src.x, std::max(src.y, src.z));
@@ -29,28 +33,50 @@ namespace
 		return src;
 	}
 
+	UMVec3d reflect(const UMRay& ray, const UMVec3d& normal)
+	{
+		UMVec3d in_dir(-ray.direction());
+		return -in_dir + normal * in_dir.dot(normal) * 2.0;
+	}
+
 	/**
 	 * shading function
 	 */
 	UMVec3d shade(const UMPrimitivePtr current, const UMRay& ray, const UMScene& scene, UMShaderParameter& parameter)
 	{
-		UMVec3d light_position = UMVec3d(1000, 1000, -1000);
-		// shadow ray
-		UMVec3d shadow_dir = light_position - parameter.intersect_point;
-		UMRay shadow_ray(parameter.intersect_point, shadow_dir.normalized());
-		
-		UMScene::Primitives::const_iterator it = scene.primitives().begin();
-		for (; it != scene.primitives().end(); ++it)
+		UMVec3d light_position = scene.light_list().at(0)->position();
+		UMVec3d to_light_dir = (light_position - parameter.intersect_point).normalized();
+		UMVec3d light_dir = light_position.normalized();
+		UMVec3d normal(parameter.normal);
+
+		// reflection ray
+		if (parameter.bounce > 0)
 		{
-			const UMPrimitivePtr primitive = *it;
-			if (primitive == current) continue;
+			--parameter.bounce;
+			UMVec3d refrection_dir = reflect(ray, normal);
+			UMRay reflection_ray(parameter.intersect_point, refrection_dir);
+			UMVec3d original_color(parameter.color);
+			UMVec3d color = trace(reflection_ray, scene, parameter);
+			UMVec3d nl = parameter.normal.dot(refrection_dir);
+			return UMVec3d(
+				original_color.x * color.x * nl.x,
+				original_color.y * color.y * nl.y,
+				original_color.z * color.z * nl.z);
+		}
+
+		// shadow ray
+		UMRay shadow_ray(parameter.intersect_point, to_light_dir);
+		UMScene::PrimitiveList::const_iterator it = scene.primitive_list().begin();
+		for (; it != scene.primitive_list().end(); ++it)
+		{
+			UMPrimitivePtr primitive = *it;
 			if (primitive->intersects(shadow_ray))
 			{
 				return UMVec3d(0);
 			}
 		}
-		UMVec3d light_dir = light_position.normalized();
-		return map_one(parameter.color * (parameter.normal.normalized().dot(light_dir)) * 0.5);
+
+		return map_one(parameter.color * (normal.dot(light_dir)) * 0.5);
 	}
 
 	/**
@@ -58,14 +84,26 @@ namespace
 	 */
 	UMVec3d trace(const UMRay& ray, const UMScene& scene, UMShaderParameter& parameter)
 	{
-		UMScene::Primitives::const_iterator it = scene.primitives().begin();
-		for (; it != scene.primitives().end(); ++it)
+		double closest_distance = std::numeric_limits<double>::max();
+		UMPrimitivePtr closest_primitive;
+		UMShaderParameter closest_parameter;
+		UMScene::PrimitiveList::const_iterator it = scene.primitive_list().begin();
+		for (int i = 0; it != scene.primitive_list().end(); ++it, ++i)
 		{
-			const UMPrimitivePtr primitive = *it;
+			UMPrimitivePtr primitive = *it;
 			if (primitive->intersects(ray, parameter))
 			{
-				return shade(primitive, ray, scene, parameter);
+				if (parameter.distance < closest_distance) 
+				{
+					closest_distance = parameter.distance;
+					closest_primitive = primitive;
+					closest_parameter = parameter;
+				}
 			}
+		}
+		if (closest_primitive)
+		{
+			return shade(closest_primitive, ray, scene, closest_parameter);
 		}
 		return scene.background_color();
 	}
@@ -80,32 +118,45 @@ namespace burger
 bool UMRaytracer::render(const UMScene& scene, UMRenderParameter& parameter)
 {
 	if (width_ == 0 || height_ == 0) return false;
-	
-	const double half_width = width_ >> 1;
-	const double half_height = height_ >> 1;
-	const int wh = width_ * height_;
+	if (!scene.camera()) return false;
 
-	parameter.mutable_output_image().set_width(width_);
-	parameter.mutable_output_image().set_height(height_);
-	UMImage::ImageBuffer& buffer = parameter.mutable_output_image().mutable_buffer();
-	buffer.resize(wh);
-
-	// garbage code for test
-	UMRay ray( UMVec3d(0, 0, -500), UMVec3d(0) );
-	
-	UMShaderParameter shader_param;
-	
 	for (int y = 0; y < height_; ++y)
 	{
 		for (int x = 0; x < width_; ++x)
 		{
-			ray.set_direction(UMVec3d( x - half_width, y - half_height, 256).normalized());
-			UMVec3d color = trace(ray, scene, shader_param);
-			buffer[width_ * y + x] = UMVec4d(color.x, color.y, color.z, 1.0);
+			scene.camera()->generate_ray(ray_, x, y);
+			UMVec3d color = trace(ray_, scene, shader_param_);
+			parameter.mutable_output_image().mutable_list()[width_ * y + x] = UMVec4d(color, 1.0);
 		}
 	}
 	
 	return false;
+}
+
+/**
+ * progressive render
+ */
+bool UMRaytracer::progress_render(const UMScene& scene, UMRenderParameter& parameter)
+{
+	if (width_ == 0 || height_ == 0) return false;
+	if (!scene.camera()) return false;
+	
+	const int ystep = 10;
+
+	for (int& y = current_y_, rows = (y + ystep); y < rows; ++y)
+	{
+		// end
+		if (y == height_) { return false; }
+
+		for (int x = 0; x < width_; ++x)
+		{
+			scene.camera()->generate_ray(ray_, x, y);
+			UMVec3d color = trace(ray_, scene, shader_param_);
+			parameter.mutable_output_image().mutable_list()[width_ * y + x] = UMVec4d(color, 1.0);
+		}
+	}
+	
+	return true;
 }
 
 } // burger

@@ -10,14 +10,23 @@
  */
 #pragma once
 
+#include <dxgi.h>
+#include <d3d11.h>
+
 #include "UMMacro.h"
 #include "UMVector.h"
+#include "UMDirectX11ShaderManager.h"
 
 namespace burger
 {
 
+class UMDirectX11Board;
+typedef std::shared_ptr<UMDirectX11Board> UMDirectX11BoardPtr;
+
+class UMDirectX11Texture;
+
 /**
- * board is a textured rectangle
+ * a textured rectangle
  */
 class UMDirectX11Board
 {
@@ -26,7 +35,7 @@ class UMDirectX11Board
 public:
 	
 	/**
-	 * create board on x-y plane
+	 * constructor. create board on x-y plane
 	 * @param [in] left_top left top position
 	 * @param [in] right_bottom right bottom position
 	 * @param [in] z z position
@@ -35,7 +44,25 @@ public:
 		UMVec2f left_top,
 		UMVec2f right_bottom,
 		float z);
-			
+
+	/**
+	 * destructor
+	 */
+	~UMDirectX11Board();
+
+	/** 
+	 * initialize
+	 */
+	bool init(ID3D11Device *device_pointer);
+	
+	/**
+	 * refresh board
+	 */
+	void refresh(
+		ID3D11Device* device_pointer,
+		ID3D11SamplerState * sampler_state_pointer,
+		UMDirectX11Texture& texture);
+
 private:
 	UMVec3f p1_;
 	UMVec2f uv1_;
@@ -48,6 +75,9 @@ private:
 
 	UMVec3f p4_;
 	UMVec2f uv4_;
+	
+	UMDirectX11ShaderManagerPtr shader_manager_;
+	ID3D11Buffer *vertex_buffer_pointer_;
 };
 
 } // burger

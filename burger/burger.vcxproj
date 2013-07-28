@@ -27,19 +27,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\burger\UMBox.cpp" />
+    <ClCompile Include="..\src\burger\UMCamera.cpp" />
     <ClCompile Include="..\src\burger\UMImage.cpp" />
+    <ClCompile Include="..\src\burger\UMLight.cpp" />
     <ClCompile Include="..\src\burger\UMMain.cpp" />
+    <ClCompile Include="..\src\burger\UMMaterial.cpp" />
+    <ClCompile Include="..\src\burger\UMMesh.cpp" />
     <ClCompile Include="..\src\burger\UMPlane.cpp" />
     <ClCompile Include="..\src\burger\UMRaytracer.cpp" />
     <ClCompile Include="..\src\burger\UMScene.cpp" />
     <ClCompile Include="..\src\burger\UMSphere.cpp" />
     <ClCompile Include="..\src\burger\UMTga.cpp" />
+    <ClCompile Include="..\src\burger\UMTriangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\burger\UMBox.h" />
+    <ClInclude Include="..\src\burger\UMCamera.h" />
     <ClInclude Include="..\src\burger\UMImage.h" />
+    <ClInclude Include="..\src\burger\UMLight.h" />
     <ClInclude Include="..\src\burger\UMMacro.h" />
+    <ClInclude Include="..\src\burger\UMMaterial.h" />
+    <ClInclude Include="..\src\burger\UMMath.h" />
     <ClInclude Include="..\src\burger\UMMatrix.h" />
-    <ClInclude Include="..\src\burger\UMModelObject.h" />
+    <ClInclude Include="..\src\burger\UMMesh.h" />
+    <ClInclude Include="..\src\burger\UMMeshGroup.h" />
     <ClInclude Include="..\src\burger\UMPlane.h" />
     <ClInclude Include="..\src\burger\UMPrimitive.h" />
     <ClInclude Include="..\src\burger\UMRay.h" />
@@ -50,6 +62,7 @@
     <ClInclude Include="..\src\burger\UMShaderParameter.h" />
     <ClInclude Include="..\src\burger\UMSphere.h" />
     <ClInclude Include="..\src\burger\UMTga.h" />
+    <ClInclude Include="..\src\burger\UMTriangle.h" />
     <ClInclude Include="..\src\burger\UMVector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -61,7 +74,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'" Label="Configuration">
     <ConfigurationType>HTMLPage</ConfigurationType>
@@ -72,14 +85,14 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'" Label="Configuration">
     <ConfigurationType>HTMLPage</ConfigurationType>
@@ -92,7 +105,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -183,6 +196,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -214,6 +228,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

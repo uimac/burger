@@ -20,7 +20,16 @@ namespace burger
 	
 /// constructor
 UMTime::UMTime(const std::string& message)
-	: message_(message)
+	: message_(message),
+	show_message_box_(false)
+{
+	initial_time_ = ::timeGetTime();
+}
+
+/// constructor
+UMTime::UMTime(const std::string& message, bool show_message_box)
+	: message_(message),
+	show_message_box_(show_message_box)
 {
 	initial_time_ = ::timeGetTime();
 }
@@ -36,13 +45,17 @@ UMTime::~UMTime()
 	std::string message(
 		message_ 
 		+ ": " 
-		+ UMStringUtil<unsigned long>::to_string(seconds)
+		+ UMStringUtil::number_to_string(seconds)
 		+ "s "
-		+ UMStringUtil<unsigned long>::to_string(mills)
-		+ "ms"
+		+ UMStringUtil::number_to_string(mills)
+		+ "ms\n"
 		);
 
 	::OutputDebugStringA(message.c_str());
+
+	if (show_message_box_) {
+		::MessageBoxA(NULL, message.c_str(), "hoge", MB_OK);
+	}
 }
 
 } // burger

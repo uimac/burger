@@ -13,6 +13,7 @@
 #include <tchar.h>
 #include <windows.h>
 #include "UMMacro.h"
+#include "UMDirectX11Viewer.h"
 
 namespace burger
 {
@@ -41,12 +42,14 @@ public:
 	int win_proc(HWND hWnd, unsigned int msg, WPARAM wParam, LPARAM lParam);
 
 private:
-	UMWindow() : width_(1280), height_(720) {}
+	UMWindow() : width_(800), height_(600) {}
 
 	/// initial client width
 	int width_;
 	/// initial client height
 	int height_;
+	
+	UMDirectX11Viewer viewer;
 
 };
 

@@ -11,6 +11,8 @@
 
 #include <string>
 #include <sstream>
+#include <codecvt>
+#include <locale>
 #include "UMMacro.h"
 
 namespace burger
@@ -19,14 +21,14 @@ namespace burger
 /**
  * string utility
  */
-template <typename T>
 class UMStringUtil
 {
 	DISALLOW_COPY_AND_ASSIGN(UMStringUtil);
 
 public:
 	
-	static std::wstring to_wstring(T value)
+	template <typename T>
+	static std::wstring number_to_wstring(T value)
 	{
 		std::wstringstream converter;
 		std::wstring  wstr;
@@ -34,14 +36,65 @@ public:
 		converter >> wstr;
 		return wstr;
 	}
-
-	static std::string to_string(T value)
+	
+	template <typename T>
+	static std::string number_to_string(T value)
 	{
 		std::stringstream converter;
 		std::string  str;
 		converter << value;
 		converter >> str;
 		return str;
+	}
+	
+	/**
+	 * convert wstring to utf16
+	 */
+	static std::u16string wstring_to_utf16(const std::wstring& str)
+	{
+#ifdef WIN32
+		const char16_t* p = reinterpret_cast<const char16_t*>(str.c_str());
+		std::u16string u16str(p);
+#else
+		// not implemented
+		std::u16string u16str;
+		assert(0);
+#endif
+		return u16str;
+	}
+	
+	/**
+	 * convert utf16 to wstring
+	 */
+	static std::wstring utf16_to_wstring(const std::u16string& utf16str)
+	{
+#ifdef WIN32
+		const wchar_t* p = reinterpret_cast<const wchar_t*>(utf16str.c_str());
+		std::wstring wstr(p);
+#else
+		// not implemented
+		std::wstring wstr;
+		assert(0);
+#endif
+		return wstr;
+	}
+
+	/**
+	 * convert utf8 string to utf16
+	 */
+	static std::u16string utf8_to_utf16(const std::string& utf8str)
+	{
+		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+		return convert.from_bytes(utf8str);
+	}
+
+	/**
+	 * convert utf16 to utf8 string
+	 */
+	static std::string utf16_to_utf8(const std::u16string& str)
+	{
+		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+		return convert.to_bytes(str);
 	}
 };
 

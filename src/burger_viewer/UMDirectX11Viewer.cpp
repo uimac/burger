@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file UMDirectX11Viewer.cpp
  *
  * @author tori31001 at gmail.com
@@ -15,20 +15,53 @@
 
 #include "UMDirectX11ShaderManager.h"
 #include "UMDirectX11Renderer.h"
+#include "UMPath.h"
+#include "UMStringUtil.h"
+#include "UMDirectX11Board.h"
+#include "UMDirectX11Texture.h"
 
 #include "UMRaytracer.h"
 #include "UMScene.h"
 #include "UMRenderParameter.h"
 #include "UMTime.h"
 #include "UMImage.h"
-#include "UMDirectX11Board.h"
+#include "UMTriangle.h"
+
+#include <tchar.h>
+#include <shlwapi.h>
+#include "UMIO.h"
+
+namespace 
+{
+	using namespace burger;
+
+	/// test UMDirectX11Texture
+	void test_umdirectx11texture(
+		ID3D11Device* device_pointer_,
+		ID3D11DeviceContext *device_context_pointer_)
+	{
+		std::u16string inpath = UMPath::resource_absolute_path(_T("rgbwrbrb.png"));
+		UMDirectX11Texture texture(false);
+		if (texture.load(device_pointer_, inpath))
+		{
+			if (UMImagePtr image = texture.convert_to_image(device_pointer_, device_context_pointer_))
+			{
+				if (static_cast<int>(image->list().size() == 8))
+				{
+					UMVec4d r = image->list().at(0);
+					UMVec4d g = image->list().at(1);
+					UMVec4d b = image->list().at(2);
+				}
+			}
+		}
+	}
+} // anonymouse namespace
 
 namespace burger
 {
 
 UMDirectX11Viewer::UMDirectX11Viewer()
 	: 
-	shader_manager_(std::make_shared<UMDirectX11ShaderManager>()),
 	// IDXGI
 	dxgi_factory_pointer_(NULL),
 	dxgi_adapter_pointer_(NULL),
@@ -42,13 +75,11 @@ UMDirectX11Viewer::UMDirectX11Viewer()
 	depth_stencil_view_pointer_(NULL),
 	depth_stencil_state_pointer_(NULL),
 	rasterizaer_state_pointer_(NULL),
-	// renderer
-	renderer_(std::make_shared<UMRaytracer>()),
 	// other
 	d3d11_debug_pointer_(NULL),
-	vertex_buffer_pointer_(NULL),
-	render_result_texture_pointer_(NULL),
-	render_result_srv_pointer_(NULL)
+	is_left_button_down_(false),
+	pre_x_(0),
+	pre_y_(0)
 {}
 
 UMDirectX11Viewer::~UMDirectX11Viewer()
@@ -77,10 +108,6 @@ UMDirectX11Viewer::~UMDirectX11Viewer()
 	SAFE_RELEASE(depth_stencil_view_pointer_);
 	SAFE_RELEASE(depth_stencil_state_pointer_);
 	SAFE_RELEASE(rasterizaer_state_pointer_);
-	SAFE_RELEASE(vertex_buffer_pointer_);
-	SAFE_RELEASE(render_result_texture_pointer_);
-	SAFE_RELEASE(render_result_srv_pointer_);
-	SAFE_RELEASE(render_result_sampler_state_pointer_);
 	
 	/*
 	if (d3d11_debug_pointer_)
@@ -103,18 +130,13 @@ bool UMDirectX11Viewer::init(HWND hWnd, int width, int height)
 
 	if (device_pointer_ && device_context_pointer_)
 	{
-		// init shader manager
-		if (shader_manager_)
-		{
-			shader_manager_->init(device_pointer_);
-		}
-
 		// rasterizer state
 		{
 			D3D11_RASTERIZER_DESC desc;
 			ZeroMemory( &desc, sizeof( D3D11_RASTERIZER_DESC ) );
 			desc.CullMode = D3D11_CULL_BACK; // backface culling
 			desc.FrontCounterClockwise =TRUE; // CCW
+			//desc.FillMode = D3D11_FILL_WIREFRAME;
 			desc.FillMode = D3D11_FILL_SOLID; 
 			desc.DepthClipEnable = TRUE;
 			device_pointer_->CreateRasterizerState( &desc, &rasterizaer_state_pointer_ );
@@ -259,9 +281,6 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 			return false;
 		}
 
-		// set render target view
-		device_context_pointer_->OMSetRenderTargets( 1, &render_target_view_pointer_, NULL ); 
-
 		if (back_buffer)
 		{
 			back_buffer->Release();
@@ -321,104 +340,20 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 		}
 	}
 
-	// create test scene and render it
-	UMRenderParameter parameter;
+	// set render target
 	{
-		UMTime time("render time");
-
-		UMScene scene;
-		scene.create_sample_scene_1();
-		renderer_->init();
-		renderer_->set_width(width);
-		renderer_->set_height(height);
-		renderer_->render(scene, parameter);
+		// set render target view
+		device_context_pointer_->OMSetRenderTargets( 1, &render_target_view_pointer_, depth_stencil_view_pointer_ ); 
 	}
 
-	// create texture
-	if (parameter.output_image().is_validate())
+	// create test scene
 	{
-		const UMImage& image = parameter.output_image();
-		UMImage::R8G8B8A8Buffer buffer;
-		image.create_r8g8b8a8_buffer(buffer);
-
-		D3D11_TEXTURE2D_DESC texture_desc;
-		::ZeroMemory(&texture_desc, sizeof(D3D11_TEXTURE2D_DESC));
-		texture_desc.Width = image.width();
-		texture_desc.Height = image.height();
-		texture_desc.MipLevels = 1;
-		texture_desc.ArraySize = 1;
-		texture_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		texture_desc.SampleDesc.Count   = 1;
-		texture_desc.SampleDesc.Quality = 0;
-		texture_desc.Usage = D3D11_USAGE_DEFAULT;
-		texture_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		texture_desc.CPUAccessFlags = 0; // don't access from cpu
-		texture_desc.MiscFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA  data;
-		::ZeroMemory(&data, sizeof(D3D11_SUBRESOURCE_DATA));
-		data.pSysMem = &buffer.front();
-		data.SysMemPitch = width * 4;
-
-		if FAILED(device_pointer_->CreateTexture2D(
-			&texture_desc, 
-			&data, 
-			&render_result_texture_pointer_))
-		{
-			return false;
-		}
-		if FAILED(device_pointer_->CreateShaderResourceView(
-			render_result_texture_pointer_, 
-			NULL, 
-			&render_result_srv_pointer_))
-		{
-			return false;
-		}
-
-		// sampler state
-		D3D11_SAMPLER_DESC sampler_desc;
-		::ZeroMemory(&sampler_desc, sizeof(D3D11_SAMPLER_DESC));
-		sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.MipLODBias = 0;
-		sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		sampler_desc.MinLOD = 0;
-		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-		if FAILED(device_pointer_->CreateSamplerState(
-			&sampler_desc, 
-			&render_result_sampler_state_pointer_ ))
-		{
-			return false;
-		}
-	}
-	
-	// create a board
-	{
-		double aspect = static_cast<double>(height) / static_cast<double>(width);
-
-		UMDirectX11Board board(
-			UMVec2f(-1.0f, -1.0f),
-			UMVec2f(1.0f, 1.0f),
-			0.5f);
-
-		D3D11_BUFFER_DESC  desc;
-		::ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.ByteWidth = sizeof(board);
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		desc.CPUAccessFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA data;
-		::ZeroMemory(&data, sizeof(D3D11_SUBRESOURCE_DATA));
-		data.pSysMem = &board;
-
-		if FAILED(device_pointer_->CreateBuffer(&desc, &data, &vertex_buffer_pointer_))
-		{
-			return false;
-		}
+		UMTime loadtime("loadtime", true);
+		scene_.init(device_pointer_, width, height);
+		
+		std::u16string inpath = UMPath::resource_absolute_path(_T("•́ε•̀٥.bos"));
+		//std::u16string inpath = UMPath::resource_absolute_path(_T("miku9.bos"));
+		scene_.load(device_pointer_, inpath);
 	}
 
 	return true;
@@ -429,87 +364,12 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
  */
 bool UMDirectX11Viewer::refresh()
 {
-
-	/*
-	std::vector<UMDirectX11BufferObject>& objects = mutable_model_loader().mutable_buffer_objects();
-	UINT stride = 3;//sizeof(um_vector3);
-	UINT index_count = 0;
-	UINT offset = 0;
-	for (size_t i = 0, size = objects.size(); i < size; ++i) {
-		device_context_pointer_->IASetVertexBuffers(0, 1, objects[i].pp_vertex_buffer(), &stride, &offset);
-		device_context_pointer_->IASetIndexBuffer(objects[i].p_index_buffer(), DXGI_FORMAT_R32_SINT, 0);
-		index_count += objects[i].face_size() * 3;
-	}
-	*/
-	
-	UINT stride = sizeof(UMVec3f) + sizeof(UMVec2f);
-	UINT offset = 0;
-	device_context_pointer_->IASetVertexBuffers(0, 1, &vertex_buffer_pointer_, &stride, &offset);
-	device_context_pointer_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
 	float clear_color[] = { 0.21f, 0.21f, 0.21f, 1.0f };
 	device_context_pointer_->ClearRenderTargetView( render_target_view_pointer_, clear_color );
 	device_context_pointer_->ClearDepthStencilView( depth_stencil_view_pointer_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
-
-	// constant buffer list
-	if (shader_manager_)
-	{
-		const UMDirectX11ShaderManager::BufferPointerList& constant_buffer = shader_manager_->constant_buffer_list();
-
-		/*
-		// put camera to constant buffer
-		if (!constant_buffer.empty())
-		{
-			ID3D11Buffer* first_constant = constant_buffer[0];
-			D3D11_MAPPED_SUBRESOURCE resource;
-
-			HRESULT hr = device_context_pointer_->Map(first_constant, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-			if( FAILED( hr ) ) { return false; }
-			// TODO
-			//::CopyMemory( resource.pData, &scene.camera()->mutable_world_view_projection_matrix(), sizeof(um_matrix) );
-		
-			device_context_pointer_->Unmap( first_constant, 0 );
-		}
-		*/
-
-		// shader list
-		const UMDirectX11ShaderManager::ShaderList& shaders = shader_manager_->shader_list();
 	
-		// apply constant buffer
-		if (!constant_buffer.empty())
-		{
-			device_context_pointer_->VSSetConstantBuffers( 0, 1, &(constant_buffer[0]) );
-		}
-
-		// apply vertex shader
-		if (device_context_pointer_ && !shaders.empty())
-		{
-			device_context_pointer_->VSSetShader( shaders[0]->vertex_shader_pointer(), NULL, 0 );
-
-			// apply hull shader
-			device_context_pointer_->HSSetShader( NULL, NULL, 0 );
-
-			// apply domain shader
-			device_context_pointer_->DSSetShader( NULL, NULL, 0 );
-
-			// apply geometry shader
-			device_context_pointer_->GSSetShader( NULL, NULL, 0 );
-
-			// apply pixel shader
-			device_context_pointer_->PSSetShader( shaders[1]->pixel_shader_pointer(), NULL, 0 );
-			device_context_pointer_->PSSetSamplers( 0, 1, &render_result_sampler_state_pointer_ );
-			device_context_pointer_->PSSetShaderResources( 0, 1, &render_result_srv_pointer_ );
-
-			// apply compute shader
-			device_context_pointer_->CSSetShader( NULL, NULL, 0 );
-
-			//// draw
-			//int index_count = 0;
-			//device_context_pointer_->DrawIndexed(index_count, 0, 0 );
-
-			device_context_pointer_->Draw( 4, 0 );
-		}
-	}
+	// refresh scene
+	scene_.refresh(device_pointer_);
 
 	if (dxgi_swap_chain_pointer_)
 	{
@@ -517,6 +377,105 @@ bool UMDirectX11Viewer::refresh()
 	}
 
 	return true;
+}
+
+/**
+ * left button down
+ */
+void UMDirectX11Viewer::on_left_button_down(HWND hWnd, short x, short y)
+{
+	pre_x_ = x;
+	pre_y_ = y;
+	is_left_button_down_ = true;
+	SetCapture(hWnd);
+}
+	
+/**
+ * left button up
+ */
+void UMDirectX11Viewer::on_left_button_up(HWND hWnd, short x, short y)
+{
+	if (is_left_button_down_)
+	{
+		ReleaseCapture();
+	}
+	is_left_button_down_ = false;
+}
+
+/**
+ * right button down
+ */
+void UMDirectX11Viewer::on_right_button_down(HWND hWnd, short x, short y)
+{
+	if (scene_.is_rendering()) return;
+	pre_x_ = x;
+	pre_y_ = y;
+	is_right_button_down_ = true;
+	SetCapture(hWnd);
+}
+	
+/**
+ * right button up
+ */
+void UMDirectX11Viewer::on_right_button_up(HWND hWnd, short x, short y)
+{
+	if (scene_.is_rendering()) return;
+	if (is_right_button_down_)
+	{
+		ReleaseCapture();
+	}
+	is_right_button_down_ = false;
+}
+
+/**
+ * mouse move
+ */
+void UMDirectX11Viewer::on_mouse_move(HWND hWnd, short x, short y)
+{
+	if (scene_.is_rendering()) return;
+	if (GetCapture() == hWnd)
+	{
+		if (is_left_button_down_)
+		{
+			if (UMCameraPtr camera = scene_.render_scene().camera())
+			{
+				camera->rotate(pre_x_ - x, pre_y_ - y);
+				pre_x_ = x;
+				pre_y_ = y;
+			}
+		}
+		if (is_right_button_down_)
+		{
+			if (UMCameraPtr camera = scene_.render_scene().camera())
+			{
+				camera->zoom(pre_x_ - x, pre_y_ - y);
+				pre_x_ = x;
+				pre_y_ = y;
+			}
+		}
+	}
+}
+
+/**
+ * keyboard pressed
+ */
+void UMDirectX11Viewer::on_key_down(HWND hWnd, unsigned int key_code)
+{
+	if (key_code == VK_SPACE)
+	{
+		if (!scene_.is_rendering())
+		{
+			scene_.render(true);
+		}
+	}
+}
+
+/**
+ * keyboard pressed
+ */
+void UMDirectX11Viewer::on_key_up(HWND hWnd, unsigned int key_code)
+{
+
 }
 
 } // burger

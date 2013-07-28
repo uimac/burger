@@ -10,9 +10,13 @@
 #pragma once
 
 #include "UMMacro.h"
+#include <memory>
 
 namespace burger
 {
+
+class UMTime;
+typedef std::shared_ptr<UMTime> UMTimePtr;
 
 /**
  * print time on destructor
@@ -28,12 +32,18 @@ public:
 	 * @param [in] print_time print time on destructor
 	 */
 	UMTime(const std::string& message);
+	
+	/**
+	 * constructor
+	 * @param [in] print_time print time on destructor
+	 */
+	UMTime(const std::string& message, bool show_message_box);
 
 	~UMTime();
 
 private:
-	bool print_time_;
-	const std::string& message_;
+	bool show_message_box_;
+	std::string message_;
 	unsigned long initial_time_;
 };
 

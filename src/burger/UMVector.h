@@ -71,6 +71,16 @@ public:
 	}
 	
 	/**
+	 * get
+	 */
+	T& operator [] (int i) { return (&x)[i]; }
+	
+	/**
+	 * get
+	 */
+	const T& operator [] (int i) const { return (&x)[i]; }
+
+	/**
 	 * compare equal
 	 */
 	bool operator == (const UMVector2 &v) const {
@@ -224,10 +234,15 @@ public:
 	UMVector3(T a, T b, T c) : x(a), y(b), z(c) {}
 	
 	/**
+	 * constructor
+	 */
+	UMVector3(const UMVector2<T>& v, T c) : x(v.x), y(v.y), z(c) {}
+
+	/**
 	 * copy constructor
 	 */
 	UMVector3 (const UMVector3 &v) : x(v.x), y(v.y), z(v.z) {}
-	
+
 	/**
 	 * assign
 	 */
@@ -237,7 +252,17 @@ public:
 		z = v.z;
 		return *this;
 	}
+
+	/**
+	 * get
+	 */
+	T& operator [] (int i) { return (&x)[i]; }
 	
+	/**
+	 * get
+	 */
+	const T& operator [] (int i) const { return (&x)[i]; }
+
 	/**
 	 * compare equal
 	 */
@@ -298,7 +323,7 @@ public:
 	 */
 	template <class U>
 	UMVector3 operator * (const U &s) const {
-		return UMVector3(x * s, y * s, z * s);
+		return UMVector3(x * (T)s, y * (T)s, z * (T)s);
 	}
 	
 	/**
@@ -337,9 +362,19 @@ public:
 	}
 
 	/**
+	 * cross
+	 */
+	UMVector3 cross(const UMVector3 &v) const {
+		return UMVector3(
+			y * v.z - z * v.y,
+			z * v.x - x * v.z,
+			x * v.y - y * v.x);
+	}
+
+	/**
 	 * get normalized
 	 */
-	UMVector3 normalized() {
+	UMVector3 normalized() const {
 		UMVector3 dst(*this);
 		T a = x * x + y * y + z * z;
 		if (a > std::numeric_limits<T>::epsilon()) {
@@ -396,6 +431,11 @@ public:
 	UMVector4(T a, T b, T c, T d) : x(a), y(b), z(c), w(d) {}
 	
 	/**
+	 * constructor
+	 */
+	UMVector4(const UMVector3<T>& v, T d) : x(v.x), y(v.y), z(v.z), w(d) {}
+	
+	/**
 	 * copy constructor
 	 */
 	UMVector4 (const UMVector4 &v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
@@ -411,6 +451,16 @@ public:
 		return *this;
 	}
 	
+	/**
+	 * get
+	 */
+	T& operator [] (int i) { return (&x)[i]; }
+	
+	/**
+	 * get
+	 */
+	const T& operator [] (int i) const { return (&x)[i]; }
+
 	/**
 	 * compare equal
 	 */
@@ -510,6 +560,18 @@ public:
 	 */
 	T dot(const UMVector4 &v) const {
 		return (x*v.x + y*v.y + z*v.z + w*v.w);
+	}
+	
+	/**
+	 * cross
+	 */
+	UMVector4 cross(const UMVector4 &v1, const UMVector4 &v2) const {
+		return UMVector4(
+			  y * (v1.z * v2.w - v2.z * v1.w) - z * (v1.y * v2.w - v2.y * v1.w) + w * (v1.y * v2.z - v1.z * v2.y),
+			-(x * (v1.z * v2.w - v2.z * v1.w) - z * (v1.x * v2.w - v2.x * v1.w) + w * (v1.x * v2.z - v1.z * v2.x)),
+			  x * (v1.y * v2.w - v2.y * v1.w) - y * (v1.x * v2.w - v2.x * v1.w) + w * (v1.x * v2.y - v2.x * v1.y),
+			-(x * (v1.y * v2.z - v2.y * v1.z) - y * (v1.x * v2.z - v2.x * v1.z) + z * (v1.x * v2.y - v2.x * v1.y))
+			);
 	}
 
 	/**

@@ -24,7 +24,7 @@ int main()
 	const int height = 640;
 	const int wh = width * height;
 
-	UMScene scene;
+	UMScene scene(width, height);
 	scene.create_sample_scene_1();
 
 	UMRendererPtr renderer(std::make_shared<UMRaytracer>());
@@ -34,7 +34,7 @@ int main()
 	renderer->set_height(height);
 	renderer->render(scene, parameter);
 
-	if (!parameter.output_image().is_validate()) {
+	if (!parameter.output_image().is_valid()) {
 		return -1;
 	}
 

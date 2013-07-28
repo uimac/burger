@@ -16,5 +16,14 @@
     <ClCompile Include="..\src\burger_test\UMVectorTest.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger_test\UMPrimitiveTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_test\UMImageTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_test\UMCameraTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

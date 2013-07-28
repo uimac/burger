@@ -22,6 +22,8 @@ typedef std::shared_ptr<UMPlane> UMPlanePtr;
 
 class UMRay;
 class UMShaderParameter;
+class UMMesh;
+typedef std::shared_ptr<UMMesh> UMMeshPtr;
 
 /**
  * a plane
@@ -49,7 +51,7 @@ public:
 	/**
 	 * get point
 	 */
-	UMVec3d point() const { return point_; }
+	const UMVec3d& point() const { return point_; }
 	
 	/**
 	 * set point
@@ -60,7 +62,7 @@ public:
 	/**
 	 * get normal
 	 */
-	UMVec3d normal() const { return normal_; }
+	const UMVec3d& normal() const { return normal_; }
 	
 	/**
 	 * set normal
@@ -82,10 +84,18 @@ public:
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& parameter) const;
 	
 	/**
-	 * ray sphere intersection
+	 * ray plane intersection
 	 * @param [in] ray a ray
 	 */
 	virtual bool intersects(const UMRay& ray) const;
+	
+	/**
+	 * convert to plane mesh
+	 * @param [in] width width
+	 * @param [in] height height
+	 * @retval UMMeshPtr converted mesh
+	 */
+	UMMeshPtr convert_to_mesh(double width, double height) const;
 
 private:
 	UMVec3d point_;

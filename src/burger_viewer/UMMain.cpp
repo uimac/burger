@@ -7,7 +7,6 @@
  * Licensed  under the MIT license. 
  *
  */
-
 #include <Windows.h>
 #include <crtdbg.h>
 

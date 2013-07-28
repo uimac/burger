@@ -1,19 +1,23 @@
 /**
  * @file UMVectorTest.cpp
  *
- * @author ori31001 at gmail.com
+ * @author tori31001 at gmail.com
  *
  * Copyright (C) 2013 Kazuma Hatta
  * Licensed  under the MIT license.
  *
  */
 #include <boost/test/unit_test.hpp>
-#include <DirectXMath.h>
+
+#include <d3d11.h>
+#include <d3dx11.h>
+#include <xnamath.h>
 #include <random>
 #include "UMVector.h"
 
 #define N 10
-#define TEST_EPSILON 0.0001f
+#define TEST_EPSILON 0.0005f
+
 
 namespace
 {
@@ -30,7 +34,7 @@ namespace
 
 BOOST_AUTO_TEST_SUITE(UMVectorTest)
 	
-using namespace DirectX;
+//using namespace DirectX;
 using namespace burger;
 
 //----------------------------------------------------------------------------
@@ -365,7 +369,6 @@ BOOST_AUTO_TEST_CASE(Vec3Div)
 	}
 }
 
-
 BOOST_AUTO_TEST_CASE(Vec3Dot)
 {
 	for (int n = 0; n < N; ++n) 
@@ -387,6 +390,32 @@ BOOST_AUTO_TEST_CASE(Vec3Dot)
 				XMLoadFloat3(&dx_src_right)));
 
 		BOOST_CHECK_CLOSE(dx_dst, my_dst1, TEST_EPSILON);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(Vec3Cross)
+{
+	for (int n = 0; n < N; ++n) 
+	{
+		float v[6];
+		um_random(v, 6);
+
+		XMFLOAT3 dx_dst;
+		XMFLOAT3 dx_src_left(v[0], v[1], v[2]);
+		XMFLOAT3 dx_src_right(v[3], v[4], v[5]);
+
+		UMVec3f my_src_left(v[0], v[1], v[2]);
+		UMVec3f my_src_right(v[3], v[4], v[5]);
+		UMVec3f my_dst1 = my_src_left.cross(my_src_right);
+
+		XMStoreFloat3(&dx_dst,
+			XMVector3Cross(
+				XMLoadFloat3(&dx_src_left),
+				XMLoadFloat3(&dx_src_right)));
+		
+		BOOST_CHECK_CLOSE(dx_dst.x, my_dst1.x, TEST_EPSILON);
+		BOOST_CHECK_CLOSE(dx_dst.y, my_dst1.y, TEST_EPSILON);
+		BOOST_CHECK_CLOSE(dx_dst.z, my_dst1.z, TEST_EPSILON);
 	}
 }
 
@@ -609,6 +638,36 @@ BOOST_AUTO_TEST_CASE(Vec4Dot)
 				XMLoadFloat4(&dx_src_right)));
 
 		BOOST_CHECK_CLOSE(dx_dst, my_dst1, TEST_EPSILON);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(Vec4Cross)
+{
+	for (int n = 0; n < N; ++n) 
+	{
+		float v[12];
+		um_random(v, 12);
+
+		XMFLOAT4 dx_dst;
+		XMFLOAT4 dx_src_left(v[0], v[1], v[2], v[3]);
+		XMFLOAT4 dx_src_middle(v[4], v[5], v[6], v[7]);
+		XMFLOAT4 dx_src_right(v[8], v[9], v[10], v[11]);
+
+		UMVec4f my_src_left(v[0], v[1], v[2], v[3]);
+		UMVec4f my_src_middle(v[4], v[5], v[6], v[7]);
+		UMVec4f my_src_right(v[8], v[9], v[10], v[11]);
+		UMVec4f my_dst1 = my_src_left.cross(my_src_middle, my_src_right);
+
+		XMStoreFloat4(&dx_dst,
+			XMVector4Cross(
+				XMLoadFloat4(&dx_src_left),
+				XMLoadFloat4(&dx_src_middle),
+				XMLoadFloat4(&dx_src_right)));
+		
+		BOOST_CHECK_CLOSE(dx_dst.x, my_dst1.x, TEST_EPSILON);
+		BOOST_CHECK_CLOSE(dx_dst.y, my_dst1.y, TEST_EPSILON);
+		BOOST_CHECK_CLOSE(dx_dst.z, my_dst1.z, TEST_EPSILON);
+		BOOST_CHECK_CLOSE(dx_dst.w, my_dst1.w, TEST_EPSILON);
 	}
 }
 

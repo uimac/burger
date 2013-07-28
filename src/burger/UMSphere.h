@@ -22,6 +22,8 @@ typedef std::shared_ptr<UMSphere> UMSpherePtr;
 
 class UMRay;
 class UMShaderParameter;
+class UMMesh;
+typedef std::shared_ptr<UMMesh> UMMeshPtr;
 
 /**
  * a sphere
@@ -49,7 +51,7 @@ public:
 	/**
 	 * get center
 	 */
-	UMVec3d center() const { return center_; }
+	const UMVec3d& center() const { return center_; }
 	
 	/**
 	 * set center
@@ -78,14 +80,24 @@ public:
 	 * ray sphere intersection
 	 * @param [in] ray a ray
 	 * @param [in,out] parameter shading parameters
+	 * @retval bool intersected or not
 	 */
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& param) const;
 	
 	/**
 	 * ray sphere intersection
 	 * @param [in] ray a ray
+	 * @retval bool intersected or not
 	 */
 	virtual bool intersects(const UMRay& ray) const;
+
+	/**
+	 * convert to uv sphere mesh
+	 * @param [in] stacks horizontal lines
+	 * @param [in] slices vertical lines
+	 * @retval UMMeshPtr converted mesh
+	 */
+	UMMeshPtr convert_to_mesh(int stacks, int slices) const;
 
 private:
 	UMVec3d center_;

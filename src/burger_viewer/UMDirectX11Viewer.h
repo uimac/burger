@@ -11,9 +11,12 @@
 
 #include <dxgi.h>
 #include <d3d11.h>
-#include "UMRenderer.h"
+#include "UMScene.h"
+
+#include "UMTime.h"
+#include "UMDirectX11Scene.h"
 #include "UMDirectX11ShaderManager.h"
-#include "UMRenderer.h"
+#include "UMDirectX11Texture.h"
 
 namespace burger
 {
@@ -40,23 +43,47 @@ public:
 	 */
 	bool refresh();
 	
-private:
 	/**
-	 * get shader manager
+	 * left button down
 	 */
-	UMDirectX11ShaderManagerPtr shader_manager() const { return shader_manager_; }
+	void on_left_button_down(HWND hWnd, short x, short y);
+	
+	/**
+	 * left button up
+	 */
+	void on_left_button_up(HWND hWnd, short x, short y);
+	
+	/**
+	 * right button down
+	 */
+	void on_right_button_down(HWND hWnd, short x, short y);
+	
+	/**
+	 * right button up
+	 */
+	void on_right_button_up(HWND hWnd, short x, short y);
 
 	/**
-	 * get shader manager
+	 * mouse move
 	 */
-	UMDirectX11ShaderManager& mutable_shader_manager() { return *shader_manager_; }
+	void on_mouse_move(HWND hWnd, short x, short y);
+
+	/**
+	 * keyboard pressed
+	 */
+	void on_key_down(HWND hWnd, unsigned int key_code);
 	
+	/**
+	 * keyboard up
+	 */
+	void on_key_up(HWND hWnd, unsigned int key_code);
+
+private:
+
 	/**
 	 * initialize devices
 	 */
 	bool init_devices(HWND hWnd, int width, int height);
-
-	UMDirectX11ShaderManagerPtr shader_manager_;
 
 	// DXGI
 	IDXGIFactory *dxgi_factory_pointer_;
@@ -74,15 +101,14 @@ private:
 	ID3D11DepthStencilState *depth_stencil_state_pointer_;
 	ID3D11RasterizerState *rasterizaer_state_pointer_;
 
-	// test
-	ID3D11Buffer *vertex_buffer_pointer_;
-	ID3D11Texture2D * render_result_texture_pointer_;
-	ID3D11ShaderResourceView * render_result_srv_pointer_;
-	ID3D11SamplerState * render_result_sampler_state_pointer_;
-
 	ID3D11Debug* d3d11_debug_pointer_;
 
-	UMRendererPtr renderer_;
+	UMDirectX11Scene scene_;
+
+	int pre_x_;
+	int pre_y_;
+	bool is_left_button_down_;
+	bool is_right_button_down_;
 };
 
 } // burger

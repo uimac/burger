@@ -26,26 +26,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -81,26 +81,26 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-gd-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-gd-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,14 +109,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,34 +127,52 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)src/burger/;$(SolutionDir)src/umio/;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Board.cpp" />
-    <ClCompile Include="..\src\burger_viewer\UMDirectX11BufferObject.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Camera.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Light.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Material.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Mesh.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11MeshGroup.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Renderer.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Scene.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Shader.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11ShaderManager.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Texture.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Viewer.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMMain.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMModelIO.cpp" />
+    <ClCompile Include="..\src\burger_viewer\UMPath.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMTime.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Board.h" />
-    <ClInclude Include="..\src\burger_viewer\UMDirectX11BufferObject.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Camera.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Light.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Material.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Mesh.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11MeshGroup.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Renderer.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Scene.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Shader.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11ShaderManager.h" />
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Texture.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Viewer.h" />
+    <ClInclude Include="..\src\burger_viewer\UMModelIO.h" />
+    <ClInclude Include="..\src\burger_viewer\UMPath.h" />
     <ClInclude Include="..\src\burger_viewer\UMStringUtil.h" />
     <ClInclude Include="..\src\burger_viewer\UMTime.h" />
     <ClInclude Include="..\src\burger_viewer\UMWindow.h" />
@@ -164,6 +184,13 @@
     <ProjectReference Include="..\umio\umio.vcxproj">
       <Project>{fcbf6269-074d-4733-8499-0bddba012e54}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\common.hlsl" />
+    <None Include="..\resource\default_ps.hlsl" />
+    <None Include="..\resource\default_vs.hlsl" />
+    <None Include="..\resource\model_ps.hlsl" />
+    <None Include="..\resource\model_vs.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

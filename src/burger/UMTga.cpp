@@ -25,7 +25,7 @@ namespace burger
  */
 bool UMTga::save(const std::string& path, const UMImage& image) const
 {
-	if (image.buffer().empty()) return false;
+	if (image.list().empty()) return false;
 
 	try
 	{

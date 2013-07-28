@@ -56,9 +56,19 @@ public:
 	 * render
 	 * @param [in] scene target scene
 	 * @param [in,out] parameter parameters for rendering
+	 * @retval success or failed
 	 */
 	virtual bool render(const UMScene& scene, UMRenderParameter& parameter) = 0;
 	
+	/**
+	 * progressive render
+	 * @param [in] scene target scene
+	 * @param [in,out] parameter parameters for rendering
+	 * @retval true still render
+	 * @retval false render finished or failed
+	 */
+	virtual bool progress_render(const UMScene& scene, UMRenderParameter& parameter){ return false; }
+
 	/** 
 	 * set client width
 	 */

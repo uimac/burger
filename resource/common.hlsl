@@ -1,7 +1,34 @@
-// world x view x projection
-cbuffer cbMatrixWVP : register( b0 )
+
+struct DirectionalLight
 {
-   matrix WorldViewProjection;
+	float4 position;
+	float4 color;
+	float4 ambient_color;
+};
+
+struct Material
+{
+	float4 diffuse;
+	// .w is specular_factor;
+	float4 specular;
+	float4 ambient;
+};
+
+// world x view x projection
+cbuffer ConstantBuffer : register( b0 )
+{
+	matrix world_view_projection;
+	matrix world_view;
+};
+
+cbuffer ConstantBuffer2 : register( b1 )
+{
+	DirectionalLight light;
+};
+
+cbuffer ConstantBuffer3 : register( b2 )
+{
+	Material material;
 };
 
 Texture2D g_texture : register( t0 );
@@ -11,14 +38,41 @@ SamplerState g_sampler : register( s0 );
 struct VS_IN
 {
 	float3 pos : POSITION;   // vertex position
-	//float4 color : COLOR;      // vertex color
 	float2 uv : TEXCOORD;   // texture
 };
 
 // vertex shader output
 struct VS_OUT
 {
-   float4 pos   : SV_POSITION;
-   //float4 color : COLOR0;
-   float2 uv : TEXCOORD0;
+	float4 pos   : SV_POSITION;
+	float2 uv : TEXCOORD0;
 };
+
+// vertex shader input
+struct VS_MODEL_IN
+{
+	float3 pos : POSITION;   // vertex position
+	float3 normal : NORMAL;
+	//float4 color : COLOR;      // vertex color
+	//float2 uv : TEXCOORD;   // texture
+};
+
+// vertex shader output
+struct VS_MODEL_OUT
+{
+	float4 pos   : SV_POSITION;
+	float4 normal : NORMAL;
+	float4 color : COLOR0;
+	float4 light_direction: TEXCOORD0;
+	//float2 uv : TEXCOORD0;
+};
+
+float4 phong(Material mat, float3 NL, float3 R, float3 V)
+{
+	float4 ambient = mat.ambient * light.ambient_color;
+	float4 diffuse = mat.diffuse * float4(NL, 0);
+	float4 specular = float4(mat.specular.xyz, 0) * pow( saturate( dot(R,V) ), mat.specular.w );
+	return ambient + (diffuse + specular) * light.color;
+}
+
+

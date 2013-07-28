@@ -18,7 +18,7 @@ namespace burger
 {
 
 /**
- * directx 11 renderer
+ * directx11 renderer
  */
 class UMDirectX11Renderer : public UMRenderer 
 {

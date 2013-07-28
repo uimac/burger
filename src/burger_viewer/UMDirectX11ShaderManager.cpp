@@ -8,16 +8,22 @@
  *
  */
 #include "UMDirectX11ShaderManager.h"
+
+#include "UMVector.h"
+#include "UMMatrix.h"
+
 #include <d3dcompiler.h>
 #include <tchar.h>
-#include "UMVector.h"
 #include <shlwapi.h>
+#include "UMStringUtil.h"
+#include "UMPath.h"
 
 namespace burger
 {
 
 /// constructer
 UMDirectX11ShaderManager::UMDirectX11ShaderManager()
+	: input_layout_pointer_(NULL)
 {
 }
 
@@ -30,56 +36,101 @@ UMDirectX11ShaderManager::~UMDirectX11ShaderManager()
 		}
 	}
 	constant_buffer_list_.clear();
+
+	SAFE_RELEASE(input_layout_pointer_);
 }
 
 /**
  * initialize
  */
-bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer)
+bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer, ShaderType type)
 {
 	if (!device_pointer) return false;
-	
-	// create contant buffers
-	D3D11_BUFFER_DESC buffer_desc;
-	buffer_desc.Usage          = D3D11_USAGE_DYNAMIC;
-	buffer_desc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-	buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	buffer_desc.MiscFlags      = 0;
-	buffer_desc.StructureByteStride = 0;
-	buffer_desc.ByteWidth      = sizeof(UMVec4f) * 4;
-	
-	ID3D11Buffer *buffer = NULL;
-
-	if FAILED(device_pointer->CreateBuffer(&buffer_desc, NULL, &buffer))
-	{
-		return false;
-	}
-	constant_buffer_list_.push_back(buffer);
 
 	feature_level_ = device_pointer->GetFeatureLevel();
 
-	// change current directory for test 
-	TCHAR path[1024];
-	GetModuleFileName(NULL, path, sizeof(path) / sizeof(TCHAR));
-	PathRemoveFileSpec(path);
-	SetCurrentDirectory(path);
-	SetCurrentDirectory(_T("../../../resource/"));
-	GetCurrentDirectory(1024, path);
+	std::u16string vs_path;
+	std::u16string ps_path;
+	
+	if (type == eConstants)
+	{
+		UINT sizes[] = {
+			// world_view_projection, world_view
+			sizeof(UMMat44f) * 2,
+			// light
+			sizeof(UMVec4f) * 3,
+		};
+
+		for (int i = 0, isize = (sizeof(sizes) / sizeof(sizes[0])); i < isize; ++i)
+		{
+			// create contant buffers
+			D3D11_BUFFER_DESC buffer_desc;
+			buffer_desc.Usage          = D3D11_USAGE_DEFAULT ;
+			buffer_desc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+			buffer_desc.CPUAccessFlags = 0;
+			buffer_desc.MiscFlags      = 0;
+			buffer_desc.StructureByteStride = 0;
+			buffer_desc.ByteWidth      = sizes[i];
+	
+			ID3D11Buffer *buffer = NULL;
+			if FAILED(device_pointer->CreateBuffer(&buffer_desc, NULL, &buffer))
+			{
+				return false;
+			}
+			constant_buffer_list_.push_back(buffer);
+		}
+	} 
+	else if (type == eBoard)
+	{
+		vs_path = UMPath::resource_absolute_path(_T("default_vs.hlsl"));
+		ps_path = UMPath::resource_absolute_path(_T("default_ps.hlsl"));
+	}
+	else if (type == eModel)
+	{
+		UINT sizes[] = {
+			// material
+			sizeof(UMVec4f) * 3
+		};
+		
+		for (int i = 0, isize = (sizeof(sizes) / sizeof(sizes[0])); i < isize; ++i)
+		{
+			// create contant buffers
+			D3D11_BUFFER_DESC buffer_desc;
+			buffer_desc.Usage          = D3D11_USAGE_DEFAULT ;
+			buffer_desc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+			buffer_desc.CPUAccessFlags = 0;
+			buffer_desc.MiscFlags      = 0;
+			buffer_desc.StructureByteStride = 0;
+			buffer_desc.ByteWidth      = sizes[i];
+	
+			ID3D11Buffer *buffer = NULL;
+			if FAILED(device_pointer->CreateBuffer(&buffer_desc, NULL, &buffer))
+			{
+				return false;
+			}
+			constant_buffer_list_.push_back(buffer);
+		}
+
+		vs_path = UMPath::resource_absolute_path(_T("model_vs.hlsl"));
+		ps_path = UMPath::resource_absolute_path(_T("model_ps.hlsl"));
+	}
+	else
+	{
+		return false;
+	}
 
 	// vertex shader
 	{
 		UMDirectX11ShaderPtr shader(std::make_shared<UMDirectX11Shader>());
 
-		std::wstring vs_path = path + std::wstring(_T("\\default_vs.hlsl"));
-
 		if (shader->create_shader_from_file(
 			device_pointer,
-			vs_path.c_str(), 
+			vs_path,
 			"VS_Main", 
 			UMDirectX11Shader::vs))
 		{
 			// create input layout
-			shader->create_input_layout(device_pointer);
+			create_input_layout(device_pointer, shader, type);
 			// save shader
 			mutable_shader_list().push_back(shader);
 		}
@@ -89,11 +140,9 @@ bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer)
 	{
 		UMDirectX11ShaderPtr shader(std::make_shared<UMDirectX11Shader>());
 
-		std::wstring ps_path = path + std::wstring(_T("\\default_ps.hlsl"));
-
 		if (shader->create_shader_from_file(
 			device_pointer,
-			ps_path.c_str(), 
+			ps_path,
 			"PS_Main", 
 			UMDirectX11Shader::ps))
 		{
@@ -103,6 +152,53 @@ bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer)
 	}
 
 	return true;
+}
+
+/**
+ * create shader input layout
+ */
+ID3D11InputLayout* UMDirectX11ShaderManager::create_input_layout(
+	ID3D11Device *device_pointer,
+	UMDirectX11ShaderPtr shader,
+	ShaderType type)
+{
+	if (type == eBoard)
+	{
+		D3D11_INPUT_ELEMENT_DESC layout[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		if FAILED(device_pointer->CreateInputLayout(
+			layout, 
+			_countof(layout), 
+			shader->buffer_pointer(), 
+			shader->buffer_size(), 
+			&input_layout_pointer_))
+		{
+			return NULL;
+		}
+	}
+	else if (type == eModel)
+	{
+		D3D11_INPUT_ELEMENT_DESC layout[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			//{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		if FAILED(device_pointer->CreateInputLayout(
+			layout, 
+			_countof(layout), 
+			shader->buffer_pointer(), 
+			shader->buffer_size(), 
+			&input_layout_pointer_))
+		{
+			return NULL;
+		}
+	}
+
+	return input_layout_pointer_;
 }
 
 } // burger

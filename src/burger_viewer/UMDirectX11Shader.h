@@ -58,7 +58,7 @@ public:
 	 */
 	bool create_shader_from_file(
 		ID3D11Device *device_pointer,
-		const std::wstring& file_path,
+		const std::u16string& file_path,
 		const std::string& entry_point_str,
 		const ShaderType type);
 
@@ -102,17 +102,10 @@ public:
 	 */
 	ID3D11HullShader *hull_shader_pointer() const { return hull_shader_pointer_; }
 
-	/**
-	 * create shader input layout
-	 * @param [in] device_pointer directx11 device
-	 */
-	ID3D11InputLayout *create_input_layout(ID3D11Device *device_pointer);
-
 private:
 	D3D_FEATURE_LEVEL feature_level_;
 	ShaderType shader_type_;
 	ID3DBlob* blob_pointer_;
-	ID3D11InputLayout *input_layout_pointer_;
 	ID3D11VertexShader *vertex_shader_pointer_;
 	ID3D11PixelShader *pixel_shader_pointer_;
 	ID3D11ComputeShader *compute_shader_pointer_;

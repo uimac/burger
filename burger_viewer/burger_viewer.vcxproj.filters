@@ -5,11 +5,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{89f50e83-7b48-44d5-add9-8222daeb93f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\burger_viewer\UMDirectX11BufferObject.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -34,11 +34,35 @@
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Board.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMPath.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Mesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11MeshGroup.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMModelIO.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger_viewer\UMDirectX11Material.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\burger_viewer\UMDirectX11BufferObject.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Renderer.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -63,5 +87,49 @@
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Board.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Texture.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMPath.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Scene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Mesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11MeshGroup.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMModelIO.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Light.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Camera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger_viewer\UMDirectX11Material.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\model_vs.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resource\common.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resource\default_ps.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resource\default_vs.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\resource\model_ps.hlsl">
+      <Filter>shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

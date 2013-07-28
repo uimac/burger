@@ -20,9 +20,8 @@ namespace burger
  */
 class UMShaderParameter
 {
-	DISALLOW_COPY_AND_ASSIGN(UMShaderParameter);
 public:
-	UMShaderParameter() {}
+	UMShaderParameter() : bounce(-1), max_bounce(1) {}
 	~UMShaderParameter() {}
 	
 	/**
@@ -44,6 +43,21 @@ public:
 	 * intersect point
 	 */
 	UMVec3d intersect_point;
+
+	/**
+	 * triangle bycentic parameter
+	 */
+	UMVec3d uvw;
+
+	/**
+	 * bounce
+	 */
+	int bounce;
+
+	/**
+	 * max bounce
+	 */
+	int max_bounce;
 };
 
 } // burger

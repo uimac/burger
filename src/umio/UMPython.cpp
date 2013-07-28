@@ -118,7 +118,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(add_uv_with_default_args, add_uv, 1, 2);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(add_vertex_color_with_default_args, add_vertex_color, 1, 2);
 
 
-BOOST_PYTHON_MODULE(UM)
+BOOST_PYTHON_MODULE(UMIO)
 {
 	using namespace boost::python;
 	
@@ -128,8 +128,6 @@ BOOST_PYTHON_MODULE(UM)
 	to_python_converter<umio::IntListVec, vector_to_pylist_converter<umio::IntListVec> >();
 	to_python_converter<umio::DoubleListVec, vector_to_pylist_converter<umio::DoubleListVec > >();
 	to_python_converter<umio::LayeredDoubleListVec, vector_to_pylist_converter<umio::LayeredDoubleListVec > >();
-	to_python_converter<umio::UMVec4d, vector_to_pylist_converter<umio::UMVec4d> >();
-	to_python_converter<umio::UMMat44d, vector_to_pylist_converter<umio::UMMat44d> >();
 	to_python_converter<umio::Mat44dList, vector_to_pylist_converter<umio::Mat44dList> >();
 
 	converter::registry::push_back(
@@ -156,17 +154,7 @@ BOOST_PYTHON_MODULE(UM)
 		&vector_to_pylist_converter<umio::LayeredDoubleListVec>::convertible,
 		&vector_to_pylist_converter<umio::LayeredDoubleListVec>::construct,
 		boost::python::type_id<umio::LayeredDoubleListVec>());
-	
-	converter::registry::push_back(
-		&array_to_pylist_converter<umio::UMVec4d>::convertible,
-		&array_to_pylist_converter<umio::UMVec4d>::construct,
-		boost::python::type_id<umio::UMVec4d>());
-	
-	converter::registry::push_back(
-		&array_to_pylist_converter<umio::UMMat44d>::convertible,
-		&array_to_pylist_converter<umio::UMMat44d>::construct,
-		boost::python::type_id<umio::UMMat44d>());
-	
+		
 	converter::registry::push_back(
 		&vector_to_pylist_converter<umio::Mat44dList>::convertible,
 		&vector_to_pylist_converter<umio::Mat44dList>::construct,
@@ -278,7 +266,25 @@ BOOST_PYTHON_MODULE(UM)
 			.export_values()
 			;
 	}
+	
+	//
+	// UMVec4d
+	//
+	class_<UMVec4d>("UMVec4d")
+		.add_property("x", make_getter(&UMVec4d::x), make_setter(&UMVec4d::x))
+		.add_property("y", make_getter(&UMVec4d::y), make_setter(&UMVec4d::y))
+		.add_property("z", make_getter(&UMVec4d::z), make_setter(&UMVec4d::z))
+		.add_property("w", make_getter(&UMVec4d::w), make_setter(&UMVec4d::w))
+		;
+	
+	//
+	// UMMat44d
+	//
+	class_<UMMat44d>("UMMat44d")
+		.def("set", &UMMat44d::set)
+		;
 
+	//
 	// UMNode
 	//
 	class_<UMNode>("UMNode")

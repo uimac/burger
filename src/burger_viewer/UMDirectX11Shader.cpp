@@ -12,6 +12,11 @@
 #include <d3d11.h>
 #include <string>
 #include <d3dcompiler.h>
+#include <D3DX11async.h>
+
+#include "UMMacro.h"
+
+#include "UMStringUtil.h"
 
 namespace
 {
@@ -52,7 +57,6 @@ namespace burger
 /// constructor
 UMDirectX11Shader::UMDirectX11Shader()
 	: feature_level_(D3D_FEATURE_LEVEL_9_1),
-	input_layout_pointer_(NULL),
 	blob_pointer_(NULL),
 	vertex_shader_pointer_(NULL),
 	pixel_shader_pointer_(NULL),
@@ -63,42 +67,13 @@ UMDirectX11Shader::UMDirectX11Shader()
 
 /// destructor
 UMDirectX11Shader::~UMDirectX11Shader()
-	{
-	if (input_layout_pointer_)
-	{
-		input_layout_pointer_->Release();
-		input_layout_pointer_ = NULL;
-	}
-	if (blob_pointer_)
-	{
-		blob_pointer_->Release();
-		blob_pointer_ = NULL;
-	}
-	if (vertex_shader_pointer_)
-	{
-		vertex_shader_pointer_->Release();
-		vertex_shader_pointer_ = NULL;
-	}
-	if (pixel_shader_pointer_)
-	{
-		pixel_shader_pointer_->Release();
-		pixel_shader_pointer_ = NULL;
-	}
-	if (compute_shader_pointer_)
-	{
-		compute_shader_pointer_->Release();
-		compute_shader_pointer_ = NULL;
-	}
-	if (domain_shader_pointer_)
-	{
-		domain_shader_pointer_->Release();
-		domain_shader_pointer_ = NULL;
-	}
-	if (hull_shader_pointer_)
-	{
-		hull_shader_pointer_->Release();
-		hull_shader_pointer_ = NULL;
-	}
+{
+	SAFE_RELEASE(blob_pointer_);
+	SAFE_RELEASE(vertex_shader_pointer_);
+	SAFE_RELEASE(pixel_shader_pointer_);
+	SAFE_RELEASE(compute_shader_pointer_);
+	SAFE_RELEASE(domain_shader_pointer_);
+	SAFE_RELEASE(hull_shader_pointer_);
 }
 
 /**
@@ -168,7 +143,8 @@ bool UMDirectX11Shader::create_shader_from_string(
 		shader_str.size(), 
 		NULL, // shader filename
 		NULL, // macro
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, // include
+		//D3D_COMPILE_STANDARD_FILE_INCLUDE, // include
+		NULL, // include
 		// entry point function name
 		entry_point_str.c_str(),
 		// target 
@@ -198,7 +174,7 @@ bool UMDirectX11Shader::create_shader_from_string(
  */
 bool UMDirectX11Shader::create_shader_from_file(
 	ID3D11Device *device_pointer,
-	const std::wstring& file_path, 
+	const std::u16string& file_path, 
 	const std::string& entry_point_str,
 	const ShaderType type)
 {
@@ -208,11 +184,11 @@ bool UMDirectX11Shader::create_shader_from_file(
 
 	ID3DBlob* error_blob(NULL);
 
-	HRESULT hr = D3DCompileFromFile(
-		file_path.c_str(), 
+	HRESULT hr = D3DX11CompileFromFileW(
+		UMStringUtil::utf16_to_wstring(file_path).c_str(), 
 		NULL, 
-		//include
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, 
+		NULL, // include
+		//D3D_COMPILE_STANDARD_FILE_INCLUDE, // include
 		// entry point function name
 		entry_point_str.c_str(),
 		// target 
@@ -221,8 +197,11 @@ bool UMDirectX11Shader::create_shader_from_file(
 		D3D10_SHADER_OPTIMIZATION_LEVEL1,
 		// flag2:effect compile option
 		0,
+		// threadpump
+		NULL,
 		(LPD3DBLOB*)&blob_pointer_,
-		(LPD3DBLOB*)&error_blob);
+		(LPD3DBLOB*)&error_blob,
+		NULL);
 
 	if ( FAILED(hr) )
 	{
@@ -275,39 +254,5 @@ bool UMDirectX11Shader::create_shader_from_file(
 	return true;
 }
 
-/**
- * create shader input layout
- */
-ID3D11InputLayout* UMDirectX11Shader::create_input_layout(ID3D11Device *device_pointer)
-{
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	if FAILED(device_pointer->CreateInputLayout(
-		layout, 
-		_countof(layout), 
-		buffer_pointer(), 
-		buffer_size(), 
-		&input_layout_pointer_))
-	{
-		return NULL;
-	}
-	
-	if (input_layout_pointer_)
-	{
-		// set layout to device context
-		ID3D11DeviceContext* device_context(NULL);
-		device_pointer->GetImmediateContext(&device_context);
-		if (device_context)
-		{
-			device_context->IASetInputLayout(input_layout_pointer_);
-		}
-		device_context->Release();
-	}
-
-	return input_layout_pointer_;
-}
 
 } // burger

@@ -15,6 +15,8 @@
 #include "UMMacro.h"
 #include "UMRenderer.h"
 #include "UMVector.h"
+#include "UMRay.h"
+#include "UMShaderParameter.h"
 
 namespace burger
 {
@@ -24,7 +26,6 @@ typedef std::shared_ptr<UMRaytracer> UMRaytracerPtr;
 
 class UMScene;
 class UMRenderParameter;
-class UMShaderParameter;
 
 /**
  * a raytracer
@@ -33,14 +34,25 @@ class UMRaytracer : public UMRenderer
 {
 	DISALLOW_COPY_AND_ASSIGN(UMRaytracer);
 public:
-	UMRaytracer() {}
+	UMRaytracer() : 
+		current_x_(0),
+		current_y_(0),
+		ray_( UMVec3d(0, 0, 500), UMVec3d(0) )
+	{}
+
 	~UMRaytracer() {}
 	
 	/**
 	 * initialize
 	 * @note needs a context
 	 */
-	virtual bool init() { return true; }
+	virtual bool init() {
+		current_x_ = 0;
+		current_y_ = 0;
+		ray_.set_origin( UMVec3d(0, 0, 500) );
+		ray_.set_direction( UMVec3d(0) );
+		return true;
+	}
 
 	/**
 	 * get renderer type
@@ -51,8 +63,25 @@ public:
 	 * render
 	 * @param [in] scene target scene
 	 * @param [in,out] parameter parameters for rendering
+	 * @retval true still render
+	 * @retval false render finished or failed
 	 */
 	virtual bool render(const UMScene& scene, UMRenderParameter& parameter);
+	
+	/**
+	 * progressive render
+	 * @param [in] scene target scene
+	 * @param [in,out] parameter parameters for rendering
+	 * @retval render finished or still render
+	 */
+	virtual bool progress_render(const UMScene& scene, UMRenderParameter& parameter);
+
+private:
+	// for progress render
+	int current_x_;
+	int current_y_;
+	UMRay ray_;
+	UMShaderParameter shader_param_;
 };
 
 } // burger

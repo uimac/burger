@@ -40,6 +40,24 @@
     <ClCompile Include="..\src\burger\UMImage.cpp">
       <Filter>src\image</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger\UMTriangle.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMCamera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMMesh.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMMaterial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMBox.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\burger\UMRaytracer.h">
@@ -54,13 +72,7 @@
     <ClInclude Include="..\src\burger\UMTga.h">
       <Filter>src\image</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\burger\UMModelObject.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\burger\UMPlane.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMPrimitive.h">
       <Filter>src\data</Filter>
     </ClInclude>
     <ClInclude Include="..\src\burger\UMRay.h">
@@ -86,6 +98,33 @@
     </ClInclude>
     <ClInclude Include="..\src\burger\UMMatrix.h">
       <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMTriangle.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMCamera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMath.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMesh.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMeshGroup.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMLight.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMaterial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMPrimitive.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMBox.h">
+      <Filter>src\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

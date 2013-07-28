@@ -41,7 +41,7 @@ public:
 	virtual bool intersects(const UMRay& ray, UMShaderParameter& param) const = 0;
 	
 	/**
-	 * ray sphere intersection
+	 * ray intersection
 	 * @param [in] ray a ray
 	 */
 	virtual bool intersects(const UMRay& ray) const = 0;
