@@ -17,6 +17,7 @@
 #include "UMMacro.h"
 #include "UMMath.h"
 #include "UMMaterial.h"
+#include "UMDirectX11Texture.h"
 
 namespace burger
 {
@@ -33,13 +34,15 @@ class UMDirectX11Material
 	DISALLOW_COPY_AND_ASSIGN(UMDirectX11Material);
 
 public:
+	typedef std::vector<std::u16string> TexturePathList;
 	
 	/**
 	 * constructor.
 	 */
 	explicit UMDirectX11Material(UMMaterialPtr ummaterial) :
 		ummaterial_(ummaterial),
-		polygon_count_(0)
+		polygon_count_(0),
+		diffuse_texture_(std::make_shared<UMDirectX11Texture>(false))
 	{}
 
 	/**
@@ -96,6 +99,28 @@ public:
 	void set_ambient(const UMVec4f& ambient) { ambient_ = ambient; }
 
 	/**
+	 * get shader flags
+	 * @note x is uvflag, yzw not defined now
+	 */
+	const UMVec4f shader_flags() const { return shader_flags_; }
+
+	/** 
+	 * set shader flags
+	 * @note x is uvflag, yzw not defined now
+	 */
+	void set_shader_flags(const UMVec4f& flags) { shader_flags_ = flags; }
+
+	/**
+	 * get diffuse texture
+	 */
+	UMDirectX11TexturePtr diffuse_texture() const { return diffuse_texture_; }
+
+	/**
+	 * get texture path list
+	 */
+	TexturePathList& mutable_texture_path_list() { return texture_path_list_; }
+
+	/**
 	 * get polygon count
 	 */
 	int polygon_count() const { return polygon_count_; }
@@ -125,6 +150,10 @@ private:
 	// .w is specular_factor;
 	UMVec4f specular_;
 	UMVec4f ambient_;
+	UMVec4f shader_flags_;
+
+	TexturePathList texture_path_list_;
+	UMDirectX11TexturePtr diffuse_texture_;
 	
 	int polygon_count_;
 	UMMaterialWeakPtr ummaterial_;

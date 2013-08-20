@@ -25,14 +25,18 @@
 #include "UMDirectX11Light.h"
 #include "UMDirectX11Camera.h"
 #include "UMTime.h"
+#include "UM1H.h"
 
 namespace burger
 {
 
+class UMDirectX11Scene;
+typedef std::shared_ptr<UMDirectX11Scene> UMDirectX11ScenePtr;
+
 /**
  * directx11 secne.
  */
-class UMDirectX11Scene 
+class UMDirectX11Scene
 {
 	DISALLOW_COPY_AND_ASSIGN(UMDirectX11Scene);
 public:
@@ -59,12 +63,22 @@ public:
 	/**
 	 * render by burger
 	 */
-	void render(bool progressive);
+	void render(ID3D11Device* device_pointer, bool progressive);
+	
+	/**
+	 * get burger renderer scene
+	 */
+	UMScenePtr render_scene() const { return render_scene_; }
 
 	/**
 	 * get burger renderer scene
 	 */
-	const UMScene& render_scene() const { return render_scene_; }
+	UMScenePtr mutable_render_scene() { return render_scene_; }
+
+	/**
+	 * get renderer
+	 */
+	UMRendererPtr renderer() const { return renderer_; }
 
 	/**
 	 * get dx11 mesh group list
@@ -74,22 +88,33 @@ public:
 	/** 
 	 * is rendering or not
 	 */
-	bool is_rendering() const { return is_rendering_; }
+	bool is_rendering() const { return is_direct_rendering_ || is_progress_rendering_; }
+	
+	/**
+	 * connect to event
+	 */
+	void connect(UMListenerPtr listener);
 
 	/**
-	 * sample scene
+	 * (for debug) sample scene
 	 */
 	void create_sample_scene(ID3D11Device* device_pointer);
 
+	/**
+	 * (for debug) load bvh boxies to dx11 scene
+	 */
+	void load_bvh(ID3D11Device* device_pointer);
+
 private:
 	// burger scene
-	UMScene render_scene_;
+	UMScenePtr render_scene_;
 	
 	// burger render parameters
 	UMRendererPtr renderer_;
 	UMRenderParameter render_parameter_;
 	UMTimePtr render_time_;
-	bool is_rendering_;
+	bool is_direct_rendering_;
+	bool is_progress_rendering_;
 	bool is_rendering_done_;
 
 	// shader
@@ -102,8 +127,13 @@ private:
 	UMDirectX11CameraPtr camera_;
 
 	// output texture
-	ID3D11SamplerState * render_result_sampler_state_pointer_;
 	UMDirectX11Texture output_texture_;
+
+	// rendering1h timer
+	UM1H rendering1h_;
+
+	// for debug
+	UMMeshGroupPtr box_group_;
 };
 
 } // burger

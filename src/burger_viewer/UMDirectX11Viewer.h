@@ -12,6 +12,7 @@
 #include <dxgi.h>
 #include <d3d11.h>
 #include "UMScene.h"
+#include "UMListener.h"
 
 #include "UMTime.h"
 #include "UMDirectX11Scene.h"
@@ -21,15 +22,19 @@
 namespace burger
 {
 
+class UMDirectX11Viewer;
+typedef std::shared_ptr<UMDirectX11Viewer> UMDirectX11ViewerPtr;
+typedef std::weak_ptr<UMDirectX11Viewer> UMDirectX11ViewerWeakPtr;
+
 /**
  * directx 11 viewer
  */
-class UMDirectX11Viewer
+class UMDirectX11Viewer : public UMListener
 {
 	DISALLOW_COPY_AND_ASSIGN(UMDirectX11Viewer);
 
 public:
-	UMDirectX11Viewer();
+	static UMDirectX11ViewerPtr create();
 
 	virtual ~UMDirectX11Viewer();
 
@@ -78,7 +83,17 @@ public:
 	 */
 	void on_key_up(HWND hWnd, unsigned int key_code);
 
+	/**
+	 * event notify
+	 */
+	virtual void update(UMEventType event_type, UMAny& parameter);
+	
 private:
+	UMDirectX11Viewer();
+
+	HWND handle_;
+
+	UMDirectX11ViewerWeakPtr self_reference_;
 
 	/**
 	 * initialize devices
@@ -103,12 +118,13 @@ private:
 
 	ID3D11Debug* d3d11_debug_pointer_;
 
-	UMDirectX11Scene scene_;
+	UMDirectX11ScenePtr scene_;
 
 	int pre_x_;
 	int pre_y_;
 	bool is_left_button_down_;
 	bool is_right_button_down_;
+	bool is_ctrl_button_down_;
 };
 
 } // burger

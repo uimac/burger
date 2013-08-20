@@ -14,6 +14,7 @@
 #include <vector>
 #include "UMMacro.h"
 #include "UMMath.h"
+#include "UMListenerConnector.h"
 
 namespace burger
 {
@@ -27,7 +28,7 @@ class UMRay;
 /**
  * a camera
  */
-class UMCamera
+class UMCamera : public UMListenerConnector
 {
 	DISALLOW_COPY_AND_ASSIGN(UMCamera);
 
@@ -77,10 +78,10 @@ public:
 	/** 
 	 * generate a camera ray
 	 * @param [out] ray generated ray
-	 * @param [in] x imageplane's pixel x
-	 * @param [in] x imageplane's pixel y
+	 * @param [in] sample_point a sample point on pixel in imageplane
+	 * @param [in] is_initial initialize generate values
 	 */
-	void generate_ray(UMRay& ray, int x, int y) const;
+	void generate_ray(UMRay& ray, const UMVec2d& sample_point, bool is_initial);
 
 	/** 
 	 * get aspect
@@ -136,6 +137,13 @@ public:
 	 */
 	void zoom(double mx, double my);
 
+	/**
+	 * dolly camera
+	 * @param [in] mx x-axis mouse move
+	 * @param [in] my y-axis mouse move
+	 */
+	void dolly(double mx, double my);
+
 private:
 	UMMat44d view_matrix_;
 	UMMat44d projection_matrix_;
@@ -155,6 +163,13 @@ private:
 	// for performance
 	double inverted_width_;
 	double inverted_height_;
+	UMVec3d generate_ray_x_scale_;
+	UMVec3d generate_ray_y_scale_;
+	UMVec3d generate_ray_adder_;
+
+	// events
+	UMEventPtr dolly_event_;
+	UMEventPtr zoom_event_;
 };
 
 } // burger

@@ -8,6 +8,7 @@
  *
  */
 #include "UMDirectX11Material.h"
+#include "UMDirectX11Texture.h"
 
 namespace
 {
@@ -34,13 +35,37 @@ UMDirectX11Material::~UMDirectX11Material()
 bool UMDirectX11Material::init(ID3D11Device *device_pointer)
 {
 	if (!device_pointer) return false;
-	UMMaterialPtr material = ummaterial();
-	if (!material) return false;
 	
-	set_ambient(to_dx(material->ambient()));
-	set_diffuse(to_dx(material->diffuse()));
-	set_specular(to_dx(material->specular()));
-	set_polygon_count(material->polygon_count());
+	ID3D11DeviceContext* device_context_pointer(NULL);
+	device_pointer->GetImmediateContext(&device_context_pointer);
+
+	if (UMMaterialPtr material = ummaterial())
+	{
+		set_ambient(to_dx(material->ambient()));
+		set_diffuse(to_dx(material->diffuse()));
+		set_specular(to_dx(material->specular()));
+		set_polygon_count(material->polygon_count());
+
+		UMMaterial::TexturePathList::const_iterator it = material->texture_path_list().begin();
+		for (; it != material->texture_path_list().end(); ++it)
+		{
+			const std::u16string& path = *it;
+			if (diffuse_texture_->load(device_pointer, path))
+			{
+				UMImagePtr image = diffuse_texture_->convert_to_image(device_pointer, device_context_pointer);
+				material->mutable_texture_list().push_back(image);
+			}
+		}
+	}
+
+	// load first texture
+	// TODO: multiple texture loading
+	if (!texture_path_list_.empty())
+	{
+		diffuse_texture_->load(device_pointer, texture_path_list_.at(0));
+	}
+
+	SAFE_RELEASE(device_context_pointer);
 
 	return true;
 }

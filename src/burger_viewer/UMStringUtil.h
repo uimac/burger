@@ -10,7 +10,9 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <codecvt>
 #include <locale>
 #include "UMMacro.h"
@@ -43,6 +45,16 @@ public:
 		std::stringstream converter;
 		std::string  str;
 		converter << value;
+		converter >> str;
+		return str;
+	}
+	
+	template <typename T>
+	static std::string number_to_sequence_string(T value, int n)
+	{
+		std::stringstream converter;
+		std::string  str;
+		converter << std::setw(n) << std::setfill('0') << value;
 		converter >> str;
 		return str;
 	}

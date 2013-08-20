@@ -12,6 +12,8 @@
 
 #include <memory>
 #include "UMMacro.h"
+#include "UMEvent.h"
+#include "UMListenerConnector.h"
 
 namespace burger
 {
@@ -25,7 +27,7 @@ class UMRenderParameter;
 /**
  * an interface of renderer
  */
-class UMRenderer
+class UMRenderer : public UMListenerConnector
 {
 	DISALLOW_COPY_AND_ASSIGN(UMRenderer);
 public:
@@ -33,11 +35,14 @@ public:
 	 * renderer types
 	 */
 	enum RendererType {
-		eRaytraceRenderer,
+		eSimpleRayTracer,
+		ePathTracer,
 		eDirectX11Renderer
 	};
 	
-	UMRenderer() : width_(0), height_(0) {}
+	UMRenderer() : 
+		width_(0), 
+		height_(0) {}
 	
 	~UMRenderer() {}
 	
@@ -88,7 +93,7 @@ public:
 	 * get client height
 	 */
 	virtual int height() const { return height_; }
-	
+
 protected:
 	int width_;
 	int height_;

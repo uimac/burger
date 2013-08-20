@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(TriangleIntersectTest)
 	mesh->mutable_vertex_list().push_back(UMVec3d(-100, -100, 0));
 	mesh->mutable_vertex_list().push_back(UMVec3d( 100, -100, 0));
 	mesh->mutable_vertex_list().push_back(UMVec3d(   0,  100, 0));
-	UMTriangle triangle(mesh, UMVec3i(0, 1, 2));
+	UMTriangle triangle(mesh, UMVec3i(0, 1, 2), 0);
 
 	UMRay ray1(UMVec3d(0, 0, 200), UMVec3d(0, 0, -1));
 	UMRay ray2(UMVec3d(-50, -50, 200), UMVec3d(0, 0, -1));
@@ -95,8 +95,6 @@ BOOST_AUTO_TEST_CASE(TriangleIntersectTest)
 	BOOST_CHECK_EQUAL(false, triangle.intersects(ray5));
 	BOOST_CHECK_EQUAL(true, triangle.intersects(ray6));
 	BOOST_CHECK_EQUAL(false, triangle.intersects(ray7));
-
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()

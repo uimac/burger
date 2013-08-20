@@ -20,7 +20,7 @@
 namespace burger
 {
 
-std::u16string UMPath::resource_absolute_path(const std::wstring& file_name)
+std::u16string UMPath::resource_absolute_path(const std::u16string& file_name)
 {
 	TCHAR path[1024];
 	GetModuleFileName(NULL, path, sizeof(path) / sizeof(TCHAR));
@@ -28,8 +28,15 @@ std::u16string UMPath::resource_absolute_path(const std::wstring& file_name)
 	SetCurrentDirectory(path);
 	SetCurrentDirectory(_T("../../../resource/"));
 	GetCurrentDirectory(1024, path);
-	std::wstring inpath = path + std::wstring(_T("\\")) + file_name;
+	std::wstring inpath = path + std::wstring(_T("\\")) + UMStringUtil::utf16_to_wstring(file_name);
 	return UMStringUtil::wstring_to_utf16(inpath);
+}
+
+std::u16string UMPath::get_file_name(const std::u16string& file_path)
+{
+	std::wstring path = UMStringUtil::utf16_to_wstring(file_path);
+	std::wstring filename(::PathFindFileName(path.c_str()));
+	return UMStringUtil::wstring_to_utf16(filename);
 }
 
 } // burger

@@ -12,8 +12,10 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 #include "UMMacro.h"
 #include "UMMath.h"
+#include "UMImage.h"
 
 namespace burger
 {
@@ -23,8 +25,6 @@ typedef std::shared_ptr<UMMaterial> UMMaterialPtr;
 typedef std::weak_ptr<UMMaterial> UMMaterialWeakPtr;
 typedef std::vector<UMMaterialPtr> UMMaterialList;
 
-class UMRay;
-
 /**
  * a material
  */
@@ -33,6 +33,9 @@ class UMMaterial
 	DISALLOW_COPY_AND_ASSIGN(UMMaterial);
 
 public:
+	typedef std::vector<UMImagePtr> TextureList;
+	typedef std::vector<std::u16string> TexturePathList;
+
 	UMMaterial() :
 		polygon_count_(0),
 		shininess_(0.0), 
@@ -68,6 +71,7 @@ public:
 	const double specular_factor() const { return specular_factor_; }
 	const double emissive_factor() const { return emissive_factor_; }
 	const double ambient_factor() const { return ambient_factor_; }
+	const TextureList& texture_list() const { return texture_list_; }
 
 	void set_name(const std::string& name) { name_ = name; }
 	void set_ambient(const UMVec4d& ambient) { ambient_ = ambient; }
@@ -83,7 +87,18 @@ public:
 	void set_specular_factor(double value) { specular_factor_ = value; }
 	void set_emissive_factor(double value) { emissive_factor_ = value; }
 	void set_ambient_factor(double value) { ambient_factor_ = value; }
+	TextureList& mutable_texture_list() { return texture_list_; }
 	
+	/**
+	 * get texture path list
+	 */
+	const TexturePathList& texture_path_list() const { return texture_path_list_; }
+
+	/**
+	 * get texture path list
+	 */
+	TexturePathList& mutable_texture_path_list() { return texture_path_list_; }
+
 	/**
 	 * get polygon count
 	 */
@@ -108,6 +123,9 @@ private:
 	double specular_factor_;
 	double emissive_factor_;
 	double ambient_factor_;
+
+	TextureList texture_list_;
+	TexturePathList texture_path_list_;
 
 	int polygon_count_;
 

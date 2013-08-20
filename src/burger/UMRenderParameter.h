@@ -25,7 +25,11 @@ class UMRenderParameter
 {
 	DISALLOW_COPY_AND_ASSIGN(UMRenderParameter);
 public:
-	UMRenderParameter() {}
+	UMRenderParameter() 
+		: super_sampling_count_(1, 1),
+		sample_count_(1024)
+	{}
+
 	~UMRenderParameter() {}
 
 	/**
@@ -38,8 +42,21 @@ public:
 	 */
 	UMImage&  mutable_output_image() { return output_image_; } 
 
+	/** 
+	 * get sample count par pixel
+	 */
+	int sample_count() const { return sample_count_; }
+
+	/**
+	 * get super sampling
+	 */
+	UMVec2i super_sampling_count() const { return super_sampling_count_; }
+	
 private:
 	UMImage output_image_;
+	UMImage temporary_image_;
+	int sample_count_;
+	UMVec2i super_sampling_count_;
 };
 
 } // burger

@@ -29,7 +29,7 @@ typedef std::vector<UMMeshPtr> UMMeshList;
 /**
  * a mesh object
  */
-class UMMesh : public UMPrimitive
+class UMMesh
 {
 	DISALLOW_COPY_AND_ASSIGN(UMMesh);
 public:
@@ -119,16 +119,6 @@ public:
 	bool create_normals(bool is_smooth);
 
 	/**
-	 * get box
-	 */
-	const UMBox& box() const { return box_; }
-	
-	/**
-	 * update AABB
-	 */
-	void update_box_by_vertex();
-
-	/**
 	 * ray mesh intersection
 	 * @param [in] ray a ray
 	 * @param [in,out] param shading parameters
@@ -140,13 +130,29 @@ public:
 	 * @param [in] ray a ray
 	 */
 	virtual bool intersects(const UMRay& ray) const;
-
-private:
+	
+	/**
+	 * get centroid
+	 */
+	virtual UMVec3d centroid() const { return box().center(); }
+	
+	/**
+	 * get box
+	 */
+	virtual const UMBox& box() const { return box_; }
+	
+	/**
+	 * update AABB
+	 */
+	virtual void update_box();
+	
 
 	/**
 	 * get material from face index
 	 */ 
 	UMMaterialPtr material_from_face_index(int face_index) const;
+
+private:
 
 	Vec3iList face_list_;
 	Vec4dList vertex_list_;

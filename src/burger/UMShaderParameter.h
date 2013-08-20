@@ -11,23 +11,34 @@
 #pragma once
 
 #include "UMMacro.h"
+#include "UMMaterial.h"
 
 namespace burger
 {
-	
+
 /**
  * shading parameters
  */
 class UMShaderParameter
 {
 public:
-	UMShaderParameter() : bounce(-1), max_bounce(1) {}
+	UMShaderParameter() : emissive(0), bounce(-1), depth(32), max_depth(32) {}
 	~UMShaderParameter() {}
 	
+	/**
+	 * material
+	 */
+	UMMaterialPtr material;
+
 	/**
 	 * color
 	 */
 	UMVec3d color;
+
+	/**
+	 * emissive
+	 */
+	UMVec3d emissive;
 
 	/**
 	 * distance
@@ -53,11 +64,16 @@ public:
 	 * bounce
 	 */
 	int bounce;
+	
+	/**
+	 * max depth
+	 */
+	int depth;
 
 	/**
-	 * max bounce
+	 * max depth
 	 */
-	int max_bounce;
+	int max_depth;
 };
 
 } // burger

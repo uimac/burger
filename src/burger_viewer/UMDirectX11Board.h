@@ -60,7 +60,6 @@ public:
 	 */
 	void refresh(
 		ID3D11Device* device_pointer,
-		ID3D11SamplerState * sampler_state_pointer,
 		UMDirectX11Texture& texture);
 
 private:

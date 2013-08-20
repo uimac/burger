@@ -88,6 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-gd-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
+      <StackCommitSize>5000000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -101,6 +102,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-gd-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
+      <StackCommitSize>5000000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,6 +121,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
+      <StackCommitSize>5000000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,9 +140,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;shlwapi.lib;winmm.lib;boost_serialization-vc100-mt-1_51.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
+      <StackReserveSize>
+      </StackReserveSize>
+      <StackCommitSize>5000000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\burger_viewer\UM1H.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Board.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Camera.cpp" />
     <ClCompile Include="..\src\burger_viewer\UMDirectX11Light.cpp" />
@@ -159,6 +166,7 @@
     <ClCompile Include="..\src\burger_viewer\UMWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\burger_viewer\UM1H.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Board.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Camera.h" />
     <ClInclude Include="..\src\burger_viewer\UMDirectX11Light.h" />

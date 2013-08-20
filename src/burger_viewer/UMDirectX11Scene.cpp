@@ -9,12 +9,16 @@
  */
 #include "UMDirectX11Scene.h"
 
-#include "UMRaytracer.h"
+#include "UMRayTracer.h"
+#include "UMPathTracer.h"
 #include "UMMesh.h"
 #include "UMTriangle.h"
 #include "UMSphere.h"
 #include "UMPlane.h"
 #include "UMMeshGroup.h"
+#include "UMTga.h"
+#include "UMAny.h"
+#include "UMAreaLight.h"
 
 #include "UMIO.h"
 #include "UMStringUtil.h"
@@ -28,18 +32,17 @@ namespace burger
 UMDirectX11Scene::UMDirectX11Scene()
 	: shader_manager_(std::make_shared<UMDirectX11ShaderManager>()),
 	output_texture_(true),
-	// renderer
-	renderer_(std::make_shared<UMRaytracer>()),
-	is_rendering_(false),
+	is_progress_rendering_(false),
+	is_direct_rendering_(false),
 	is_rendering_done_(false)
 {
 //	D3D11_INPUT_ELEMENT_DESC desc;
 //	device->CreateInputLayout( vElementPOSNORCOL, input_layout_pointer() );
+	
 }
 
 UMDirectX11Scene::~UMDirectX11Scene()
 {
-	SAFE_RELEASE(render_result_sampler_state_pointer_);
 }
 
 /**
@@ -53,58 +56,29 @@ bool UMDirectX11Scene::init(ID3D11Device *device_pointer, int width, int height)
 	ID3D11DeviceContext *device_context_pointer = NULL;
 	device_pointer->GetImmediateContext(&device_context_pointer);
 
+	// renderer
+	//renderer_(std::make_shared<UMRayTracer>();
+	renderer_ = std::make_shared<UMPathTracer>();
 	renderer_->init();
 	renderer_->set_width(width);
 	renderer_->set_height(height);
-
-	render_scene_.init(width, height);
-	create_sample_scene(device_pointer);
-
-	// light
-	UMLightPtr umlight = std::make_shared<UMLight>();
-	umlight->set_position(UMVec3d(1000, 500, 500));
-	render_scene_.mutable_light_list().push_back(umlight);
 	
-	UMDirectX11LightPtr light = UMModelIO::convert_light_to_dx11_light(device_pointer, umlight);
-	dx11_light_list_.push_back(light);
-
-	// camera
-	camera_ = UMModelIO::convert_camera_to_dx11_camera(device_pointer, render_scene_.camera());
+	// render scene
+	render_scene_ = (std::make_shared<UMScene>());
+	render_scene_->init(width, height);
+	create_sample_scene(device_pointer);
 
 	// init shader manager for camera
 	shader_manager_->init(device_pointer, UMDirectX11ShaderManager::eConstants);
 
 	// init output image
-	render_parameter_.mutable_output_image().set_width(width);
-	render_parameter_.mutable_output_image().set_height(height);
-	UMImage::ImageBuffer& buffer = render_parameter_.mutable_output_image().mutable_list();
-	buffer.resize(width*height);
+	render_parameter_.mutable_output_image().init(width, height);
 
 	// create texture
 	if (render_parameter_.output_image().is_valid())
 	{
 		const UMImage& image = render_parameter_.output_image();
 		output_texture_.convert_from_image(device_pointer, image);
-
-		// sampler state
-		D3D11_SAMPLER_DESC sampler_desc;
-		::ZeroMemory(&sampler_desc, sizeof(D3D11_SAMPLER_DESC));
-		sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampler_desc.MipLODBias = 0;
-		sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		sampler_desc.MinLOD = 0;
-		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-		if FAILED(device_pointer->CreateSamplerState(
-			&sampler_desc, 
-			&render_result_sampler_state_pointer_ ))
-		{
-			SAFE_RELEASE(device_context_pointer);
-			return false;
-		}
 	}
 	
 	// create a board
@@ -123,39 +97,33 @@ bool UMDirectX11Scene::init(ID3D11Device *device_pointer, int width, int height)
 /**
  * render by burger
  */
-void UMDirectX11Scene::render(bool is_progressive)
+void UMDirectX11Scene::render(ID3D11Device* device_pointer, bool is_progressive)
 {
+	if (!device_pointer) return;
+
 	const int width = renderer_->width();
 	const int height = renderer_->height();
-	
-	if (!is_rendering_ && !is_rendering_done_)
+
+	if (!is_rendering() && !is_rendering_done_)
 	{
 		render_time_ = std::make_shared<UMTime>("render_time", true);
-		is_rendering_ = true;
 	}
 	
-	if (is_progressive)
+	if (is_progress_rendering_)
 	{
-		if (!renderer_->progress_render(render_scene(), render_parameter_))
+		if (!renderer_->progress_render(*render_scene(), render_parameter_))
 		{
 			is_rendering_done_ = true;
 		}
 	}
-	else
+	if (is_direct_rendering_)
 	{
-		renderer_->render(render_scene(), render_parameter_);
+		renderer_->render(*render_scene(), render_parameter_);
 		is_rendering_done_ = true;
 	}
-	
-	if (is_rendering_done_)
-	{
-		is_rendering_ = false;
-		is_rendering_done_ = false;
-		render_time_ = UMTimePtr();
 
-		render_parameter_.mutable_output_image().clear();
-		renderer_->init();
-	}
+	is_progress_rendering_ = is_progressive;
+	is_direct_rendering_ = !is_progressive;
 }
 
 /**
@@ -165,6 +133,9 @@ void UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
 {
 	if (!device_pointer) return;
 	if (!shader_manager_) return;
+
+	// refresh rendering1h
+	rendering1h_.refresh(device_pointer, output_texture_);
 
 	ID3D11DeviceContext *device_context_pointer = NULL;
 	device_pointer->GetImmediateContext(&device_context_pointer);
@@ -214,22 +185,35 @@ void UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
 		{
 			(*it)->refresh(device_pointer);
 		}
+	}	
+	
+	if (is_rendering_done_)
+	{
+		is_progress_rendering_ = false;
+		is_direct_rendering_ = false;
+		is_rendering_done_ = false;
+		render_time_ = UMTimePtr();
+
+		//UMTga tga;
+		//tga.save("hoge.tga", render_parameter_.mutable_output_image());
+
+		render_parameter_.mutable_output_image().clear();
+		renderer_->init();
 	}
 
-	if (is_rendering_)
+	if (is_rendering())
 	{
 		// render
-		render(true);
+		render(device_pointer, is_progress_rendering_);
 
 		// update image
 		// TODO: this is slow
 		const UMImage& image = render_parameter_.output_image();
 		output_texture_.overwrite(device_pointer, device_context_pointer, image);
-
 		// refresh board
-		board_->refresh(device_pointer, render_result_sampler_state_pointer_, output_texture_);
+		board_->refresh(device_pointer, output_texture_);
 	}
-
+	
 	SAFE_RELEASE(device_context_pointer);
 }
 
@@ -257,13 +241,24 @@ bool UMDirectX11Scene::load(
 		{
 			return false;
 		}
-		render_scene_.mutable_mesh_group_list().push_back(mesh_group);
+		render_scene_->mutable_mesh_group_list().push_back(mesh_group);
 
 		UMMeshList::const_iterator it = mesh_group->mesh_list().begin();
 		for (; it != mesh_group->mesh_list().end(); ++it)
 		{
 			UMMeshPtr mesh = *it;
-			render_scene_.mutable_primitive_list().push_back(mesh);
+			
+			//render_scene_->mutable_primitive_list().push_back(mesh);
+
+			const int face_count = static_cast<int>(mesh->face_list().size());
+			const int start_index = static_cast<int>(render_scene_->primitive_list().size());
+			render_scene_->mutable_primitive_list().resize(start_index + face_count);
+			for (int i = 0; i < face_count; ++i)
+			{
+				const UMVec3i& face = mesh->face_list().at(i);
+				UMTrianglePtr triangle(std::make_shared<UMTriangle>(mesh, face, i));
+				render_scene_->mutable_primitive_list().at(start_index + i) = triangle;
+			}
 		}
 	}
 
@@ -281,40 +276,102 @@ void UMDirectX11Scene::create_sample_scene(ID3D11Device* device_pointer)
 	if (!device_pointer) return;
 
 	// spheres
-	UMSpherePtr sphere1(std::make_shared<UMSphere>(UMVec3d(-20, -10, -20), 20.0));
-	UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(20, -10, -20), 20.0));
-	UMSpherePtr sphere3(std::make_shared<UMSphere>(UMVec3d(0, 25, -20), 20.0));
-	sphere1->set_color(UMVec3d(0.0, 1.0, 0.0));
-	sphere2->set_color(UMVec3d(0.0, 0.0, 1.0));
-	sphere3->set_color(UMVec3d(1.0, 0.0, 0.0));
+	UMSpherePtr sphere1(std::make_shared<UMSphere>(UMVec3d(-20, -10, -50), 20.0));
+	UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(20, -10, -50), 20.0));
+	UMSpherePtr sphere3(std::make_shared<UMSphere>(UMVec3d(0, 35, 0), 10));
+	UMSpherePtr sphere4(std::make_shared<UMSphere>(UMVec3d(0, 25, 0), 3));
+	sphere1->mutable_material()->set_diffuse(UMVec4d(0.0, 1.0, 0.0, 1.0));
+	sphere2->mutable_material()->set_diffuse(UMVec4d(0.0, 0.0, 1.0, 1.0));
+	sphere3->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	sphere3->mutable_material()->set_emissive_factor(10.0);
+	sphere4->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	sphere4->mutable_material()->set_emissive(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	sphere4->mutable_material()->set_emissive_factor(10.0);
 
 	// plane
 	UMPlanePtr plane1(std::make_shared<UMPlane>(UMVec3d(0, -30, 0), UMVec3d(0, 1, 0)));
 	plane1->set_color(UMVec3d(0.5, 1.0, 0.5));
 	
 	// convert to mesh
-	UMMeshPtr mesh1 = sphere1->convert_to_mesh(32, 32);
-	UMMeshPtr mesh2 = sphere2->convert_to_mesh(32, 32);
-	UMMeshPtr mesh3 = sphere3->convert_to_mesh(32, 32);
-	UMMeshPtr mesh4 = plane1->convert_to_mesh(5000, 5000);
+	//UMMeshPtr mesh1 = sphere1->convert_to_mesh(32, 32);
+	//UMMeshPtr mesh2 = sphere2->convert_to_mesh(32, 32);
+	//UMMeshPtr mesh3 = sphere3->convert_to_mesh(32, 32);
+	//UMMeshPtr mesh4 = plane1->convert_to_mesh(5000, 5000);
+	UMMeshPtr mesh5 = sphere4->convert_to_mesh(32, 32);
 	
 	// add to render scene
 	UMMeshGroupPtr umgroup(std::make_shared<UMMeshGroup>());
-	umgroup->mutable_mesh_list().push_back(mesh1);
-	umgroup->mutable_mesh_list().push_back(mesh2);
-	umgroup->mutable_mesh_list().push_back(mesh3);
-	umgroup->mutable_mesh_list().push_back(mesh4);
-	render_scene_.mutable_mesh_group_list().push_back(umgroup);
-	render_scene_.mutable_primitive_list().push_back(UMPrimitivePtr(sphere1));
-	render_scene_.mutable_primitive_list().push_back(UMPrimitivePtr(sphere2));
-	render_scene_.mutable_primitive_list().push_back(UMPrimitivePtr(sphere3));
-	render_scene_.mutable_primitive_list().push_back(UMPrimitivePtr(plane1));
+	//umgroup->mutable_mesh_list().push_back(mesh1);
+	//umgroup->mutable_mesh_list().push_back(mesh2);
+	//umgroup->mutable_mesh_list().push_back(mesh3);
+	//umgroup->mutable_mesh_list().push_back(mesh4);
+	umgroup->mutable_mesh_list().push_back(mesh5);
+	render_scene_->mutable_mesh_group_list().push_back(umgroup);
+	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere1));
+	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere2));
+	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere3));
+	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere4));
+	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(plane1));
 
 	// convert to dx11 group
 	UMDirectX11MeshGroupPtr converted = UMModelIO::convert_mesh_group_to_dx11_mesh_group(device_pointer, umgroup);
 	if (converted) {
 		dx11_mesh_group_list_.push_back(converted);
 	}
+	
+	// light
+	//UMLightPtr umlight = std::make_shared<Light>();
+	//umlight->set_position(UMVec3d(200, 200, 500));
+	UMLightPtr umlight = std::make_shared<UMAreaLight>(
+		UMVec3d(-5, 26.2, -5),
+		UMVec3d(10, 0, 0),
+		UMVec3d(0, 0, 10),
+		0, 0, 1);
+	render_scene_->mutable_light_list().push_back(umlight);
+	
+	UMDirectX11LightPtr light = UMModelIO::convert_light_to_dx11_light(device_pointer, umlight);
+	dx11_light_list_.push_back(light);
+
+	// camera
+	camera_ = UMModelIO::convert_camera_to_dx11_camera(device_pointer, render_scene_->camera());
+
 }
+
+void UMDirectX11Scene::load_bvh(ID3D11Device* device_pointer)
+{
+	UMBvhPtr bvh = mutable_render_scene()->bvh();
+	UMPrimitiveList src = bvh->create_box_list();
+	UMPrimitiveList::iterator it = src.begin();
+	
+	box_group_ = std::make_shared<UMMeshGroup>();
+	for (; it != src.end(); ++it)
+	{
+		if (UMBoxPtr box = std::dynamic_pointer_cast<UMBox>(*it))
+		{
+			box_group_->mutable_mesh_list().push_back(box->convert_to_mesh());
+		}
+	}
+	// convert to dx11 group
+	UMDirectX11MeshGroupPtr converted = UMModelIO::convert_mesh_group_to_dx11_mesh_group(device_pointer, box_group_);
+	if (converted) {
+		dx11_mesh_group_list_.push_back(converted);
+	}
+}
+/**
+ * connect to event
+ */
+void UMDirectX11Scene::connect(UMListenerPtr listener)
+{
+	if (!listener) return;
+	if (renderer_)
+	{
+		renderer_->connect(listener);
+	}
+	if (render_scene_)
+	{
+		render_scene_->connect_to_all_events(listener);
+	}
+}
+
 
 } // burger

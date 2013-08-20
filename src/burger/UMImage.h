@@ -34,13 +34,18 @@ public:
 	
 	UMImage() : width_(0), height_(0) {}
 	
-	/**
-	 * @param [in] width the pixel width
-	 * @param [in] height the pixels height
-	 */
-	UMImage(int width, int height) : width_(width), height_(height) {}
+	///**
+	// * @param [in] width the pixel width
+	// * @param [in] height the pixels height
+	// */
+	//UMImage(int width, int height) : width_(width), height_(height) {}
 	
 	~UMImage() {}
+
+	/**
+	 * init image
+	 */
+	bool init(int width, int height);
 
 	/**
 	 * get image buffer

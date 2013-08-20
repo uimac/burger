@@ -79,7 +79,7 @@ int UMWindow::win_main(HINSTANCE hInst, HANDLE hPrev, TCHAR* cmd, int show)
 	UpdateWindow(hwnd);
 	
 	// create my viewer
-	viewer.init(hwnd, width_, height_);
+	viewer->init(hwnd, width_, height_);
 
 	static MSG msg;
 
@@ -94,7 +94,7 @@ int UMWindow::win_main(HINSTANCE hInst, HANDLE hPrev, TCHAR* cmd, int show)
 		else
 		{
 			// refresh window
-			if (!viewer.refresh())
+			if (!viewer->refresh())
 			{
 				// the end
 				::PostMessage(hwnd, WM_CLOSE, 0, 0);
@@ -103,6 +103,8 @@ int UMWindow::win_main(HINSTANCE hInst, HANDLE hPrev, TCHAR* cmd, int show)
 		::Sleep(1);
 	}
 	::Sleep(1);
+
+	viewer = UMDirectX11ViewerPtr();
 
 	return true;
 }
@@ -126,37 +128,37 @@ int UMWindow::win_proc(HWND hWnd, unsigned int msg, WPARAM wParam, LPARAM lParam
 			}
 		case WM_LBUTTONDOWN:
 			{
-				viewer.on_left_button_down(hWnd, LOWORD(lParam), HIWORD(lParam));
+				viewer->on_left_button_down(hWnd, LOWORD(lParam), HIWORD(lParam));
 				break;
 			}
 		case WM_LBUTTONUP:
 			{
-				viewer.on_left_button_up(hWnd, LOWORD(lParam), HIWORD(lParam));
+				viewer->on_left_button_up(hWnd, LOWORD(lParam), HIWORD(lParam));
 				break;
 			}
 		case WM_RBUTTONDOWN:
 			{
-				viewer.on_right_button_down(hWnd, LOWORD(lParam), HIWORD(lParam));
+				viewer->on_right_button_down(hWnd, LOWORD(lParam), HIWORD(lParam));
 				break;
 			}
 		case WM_RBUTTONUP:
 			{
-				viewer.on_right_button_up(hWnd, LOWORD(lParam), HIWORD(lParam));
+				viewer->on_right_button_up(hWnd, LOWORD(lParam), HIWORD(lParam));
 				break;
 			}
 		case WM_MOUSEMOVE:
 			{
-				viewer.on_mouse_move(hWnd, LOWORD(lParam), HIWORD(lParam));
+				viewer->on_mouse_move(hWnd, LOWORD(lParam), HIWORD(lParam));
 				break;
 			}
 		case WM_KEYDOWN: 
 			{
-				viewer.on_key_down(hWnd, static_cast<unsigned int>(wParam));
+				viewer->on_key_down(hWnd, static_cast<unsigned int>(wParam));
 				break;
 			}
 		case WM_KEYUP: 
 			{
-				viewer.on_key_up(hWnd, static_cast<unsigned int>(wParam));
+				viewer->on_key_up(hWnd, static_cast<unsigned int>(wParam));
 				break;
 			}
 	}

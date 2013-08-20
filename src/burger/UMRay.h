@@ -26,7 +26,10 @@ class UMRay
 public:
 	UMRay() :
 		origin_(0),
-		direction_(0) {}
+		direction_(0),
+		tmin_(FLT_EPSILON),
+		tmax_(FLT_MAX)
+	{}
 	
 	/**
 	 * @param [in] origin origin
@@ -34,7 +37,9 @@ public:
 	 */
 	UMRay(const UMVec3d& origin, const UMVec3d& direction) :
 		origin_(origin),
-		direction_(direction) {}
+		direction_(direction),
+		tmin_(FLT_EPSILON),
+		tmax_(FLT_MAX) {}
 
 	~UMRay() {}
 
@@ -59,10 +64,32 @@ public:
 	 * @param [in] direction source direction
 	 */
 	void set_direction(const UMVec3d& direction) { direction_ = direction; }
+	
+	/**
+	 * get tmin
+	 */
+	double tmin() const { return tmin_; }
+
+	/**
+	 * get tmin
+	 */
+	void set_tmin(double tmin) { tmin_ = tmin; }
+	
+	/**
+	 * get tmax
+	 */
+	double tmax() const { return tmax_; }
+	
+	/**
+	 * get tmax
+	 */
+	void set_tmax(double tmax) { tmax_ = tmax; }
 
 private:
 	UMVec3d origin_;
 	UMVec3d direction_;
+	double tmin_;
+	double tmax_;
 };
 
 } // burger

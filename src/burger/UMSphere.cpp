@@ -25,8 +25,8 @@ namespace burger
  */
 bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 {
-	UMVec3d ray_dir(ray.direction());
-	UMVec3d ray_orig(ray.origin());
+	const UMVec3d& ray_dir = ray.direction();
+	const UMVec3d& ray_orig = ray.origin();
 
 	UMVec3d center_to_ray = ray_orig - center_;
 	double a = ray_dir.dot(ray_dir);
@@ -43,7 +43,8 @@ bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 	double distance = (-b - e) / (2 * a);
 	if (distance > FLT_EPSILON) {
 		// hit
-		parameter.color = color_;
+		parameter.color = material_->diffuse().xyz();
+		parameter.emissive = material_->emissive().xyz() * material_->emissive_factor();
 		parameter.distance = distance;
 		parameter.intersect_point = ray_orig + ray_dir * distance;
 		parameter.normal = (parameter.intersect_point - center_) / radius_;
@@ -53,7 +54,8 @@ bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 	distance = (-b + e) / (2 * a);
 	if (distance > FLT_EPSILON) {
 		// hit
-		parameter.color = color_;
+		parameter.color = material_->diffuse().xyz();
+		parameter.emissive = material_->emissive().xyz() * material_->emissive_factor();
 		parameter.distance = distance;
 		parameter.intersect_point = ray_orig + ray_dir * distance;
 		parameter.normal = (parameter.intersect_point - center_) / radius_;
@@ -68,8 +70,8 @@ bool UMSphere::intersects(const UMRay& ray, UMShaderParameter& parameter) const
  */
 bool UMSphere::intersects(const UMRay& ray) const
 {
-	UMVec3d ray_dir(ray.direction());
-	UMVec3d ray_orig(ray.origin());
+	const UMVec3d& ray_dir = ray.direction();
+	const UMVec3d& ray_orig = ray.origin();
 
 	UMVec3d center_to_ray = ray_orig - center_;
 	double a = ray_dir.dot(ray_dir);
@@ -183,13 +185,18 @@ UMMeshPtr UMSphere::convert_to_mesh(int stacks, int slices) const
 			}
 		}
 	}
-	UMMaterialPtr mat = UMMaterial::default_material();
-	mat->set_diffuse(UMVec4d(color_, 1.0));
-	mat->set_polygon_count(static_cast<int>(mesh->face_list().size()));
-	mesh->mutable_material_list().push_back(mat);
+	material_->set_polygon_count(static_cast<int>(mesh->face_list().size()));
+	mesh->mutable_material_list().push_back(material_);
 	mesh->create_normals(true);
-	mesh->update_box_by_vertex();
+	mesh->update_box();
 	return mesh;
+}
+
+void UMSphere::update_box()
+{
+	box_.init();
+	box_.extend(center_ - radius_);
+	box_.extend(center_ + radius_);
 }
 
 } // burger

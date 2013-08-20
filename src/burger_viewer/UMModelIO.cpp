@@ -12,18 +12,21 @@
 
 #include "UMModelIO.h"
 #include "UMStringUtil.h"
+#include "UMPath.h"
 
 namespace
 {
 	using namespace burger;
 
-	double import_scale_for_debug = 10.0;
+	double import_scale_for_debug = 1.0;
 	
 	UMVec2d to_um(const umio::UMVec2d& v) { return UMVec2d(v.x, v.y); }
 
 	UMVec3d to_um(const umio::UMVec3d& v) { return UMVec3d(v.x, v.y, v.z); }
 
 	UMVec4d to_um(const umio::UMVec4d& v) { return UMVec4d(v.x, v.y, v.z, v.w); }
+
+	UMVec4d to_um_material_value(const umio::UMVec4d& v) { return UMVec4d(v.x, v.y, v.z, 1.0); }
 	
 	UMVec2i to_um(const umio::UMVec2i& v) { return UMVec2i(v.x, v.y); }
 
@@ -36,166 +39,6 @@ namespace
 	UMVec3f to_dx(const umio::UMVec3d& v) { return UMVec3f((float)v.x, (float)v.y, (float)v.z); }
 
 	UMVec4f to_dx(const umio::UMVec4d& v) { return UMVec4f((float)v.x, (float)v.y, (float)v.z, (float)v.w); } 
-	
-	/** 
-	 * load index from umio to dx11
-	 */
-	void load_vertex_index(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{	
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->index_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3i* index = (UMVec3i*) resource.pData;
-		const umio::IntListVec& face_list = src_mesh.vertex_index_list();
-		for (size_t i = 0, i_size = face_list.size(); i < i_size; ++i) {
-			const umio::IntList& face = face_list.at(i);
-			if (face.size() >= 4){
-				assert(0);
-			}
-			index[i].x = face.at(0);
-			index[i].y = face.at(1);
-			index[i].z = face.at(2);
-		}
-		device_context->Unmap(dst_mesh->index_buffer_pointer(), 0);
-	}
-	
-	/**
-	 * load vertex from umio to dx11
-	 */
-	void load_vertex(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->vertex_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3f* dx_vertex = (UMVec3f*)resource.pData;
-		const umio::DoubleListVec& vertex_list = src_mesh.vertex_list();
-
-		for (size_t i = 0, i_size = vertex_list.size(); i < i_size; ++i) {
-			const umio::DoubleList& vertex = vertex_list.at(i);
-			dx_vertex[i].x = static_cast<float>(vertex.at(0));
-			dx_vertex[i].y = static_cast<float>(vertex.at(1));
-			dx_vertex[i].z = static_cast<float>(vertex.at(2));
-			dx_vertex[i] = dx_vertex[i] * import_scale_for_debug;
-		}
-		device_context->Unmap(dst_mesh->vertex_buffer_pointer(), 0);
-	}
-
-	/**
-	 * load normal from umio to dx11
-	 */
-	void load_normal(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->normal_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3f* dx_normal = (UMVec3f*)resource.pData;
-		const umio::DoubleListVec& normal_list = src_mesh.normal_list();
-		
-		for (size_t i = 0, i_size = normal_list.size(); i < i_size; ++i) {
-			const umio::DoubleList& normal = normal_list.at(i);
-			dx_normal[i].x = static_cast<float>(normal.at(0));
-			dx_normal[i].y = static_cast<float>(normal.at(1));
-			dx_normal[i].z = static_cast<float>(normal.at(2));
-		}
-		device_context->Unmap(dst_mesh->normal_buffer_pointer(), 0);
-	}
-
-	/**
-	 * load vertex color from umio to dx11
-	 */
-	void load_vertex_color(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->vertex_color_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3f* dx_vertex_color = (UMVec3f*)resource.pData;
-		const umio::DoubleListVec& vertex_color_list = src_mesh.vertex_color_list();
-		
-		for (size_t i = 0, i_size = vertex_color_list.size(); i < i_size; ++i) {
-			const umio::DoubleList& vertex_color = vertex_color_list.at(i);
-			dx_vertex_color[i].x = static_cast<float>(vertex_color.at(0));
-			dx_vertex_color[i].y = static_cast<float>(vertex_color.at(1));
-			dx_vertex_color[i].z = static_cast<float>(vertex_color.at(2));
-		}
-		device_context->Unmap(dst_mesh->vertex_color_buffer_pointer(), 0);
-	}
-	
-	/** 
-	 * load uv from umio to dx11
-	 */
-	void load_uv(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->uv_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3f* dx_uv = (UMVec3f*) resource.pData;
-		const umio::DoubleListVec& uv_list = src_mesh.uv_list();
-		
-		for (size_t i = 0, i_size = uv_list.size(); i < i_size; ++i) {
-			const umio::DoubleList& uv = uv_list.at(i);
-			dx_uv[i].x = static_cast<float>(uv.at(0));
-			dx_uv[i].y = static_cast<float>(uv.at(1));
-		}
-		device_context->Unmap(dst_mesh->uv_buffer_pointer(), 0);
-	}
-	
-	/** 
-	 * load material from umio to dx11
-	 */
-	void load_material(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		const umio::UMMesh& src_mesh)
-	{
-		const int size = static_cast<int>(src_mesh.material_list().size());
-		dst_mesh->mutable_material_list().resize(size);
-
-		for (int i = 0; i < size; ++i)
-		{
-			const umio::UMMaterial& material = src_mesh.material_list().at(i);
-			UMDirectX11MaterialPtr dx_material = std::make_shared<UMDirectX11Material>(UMMaterialPtr());
-			dx_material->set_ambient(to_dx(material.ambient()));
-			dx_material->set_diffuse(to_dx(material.diffuse()));
-			dx_material->set_specular(to_dx(material.specular()));
-			const int polygon_count = static_cast<int>(std::count(
-				src_mesh.material_index_list().begin(), 
-				src_mesh.material_index_list().end(),
-				i));
-
-			dx_material->set_polygon_count(polygon_count);
-			dst_mesh->mutable_material_list().at(i) = dx_material;
-		}
-
-		// default material
-		if (size == 0)
-		{
-			dst_mesh->mutable_material_list().resize(1);
-			UMDirectX11MaterialPtr dx_material = UMDirectX11Material::default_material();
-			const int polygon_count = static_cast<int>(src_mesh.vertex_index_list().size());
-			dx_material->set_polygon_count(polygon_count);
-			dst_mesh->mutable_material_list().at(0) = dx_material;
-		}
-	}
 
 	//----------------------------------------------------------------------------
 
@@ -235,13 +78,18 @@ namespace
 		device_context->Map(dst_mesh->vertex_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 
 		UMVec3f* dx_vertex = (UMVec3f*)resource.pData;
+		const UMMesh::Vec3iList& face_list = src_mesh->face_list();
 		const UMMesh::Vec3dList& vertex_list = src_mesh->vertex_list();
 
-		for (size_t i = 0, i_size = vertex_list.size(); i < i_size; ++i) {
-			const UMVec3d& vertex = vertex_list.at(i);
-			dx_vertex[i].x = static_cast<float>(vertex.x);
-			dx_vertex[i].y = static_cast<float>(vertex.y);
-			dx_vertex[i].z = static_cast<float>(vertex.z);
+		for (size_t i = 0, i_size = face_list.size(); i < i_size; ++i) {
+			const UMVec3i& face = face_list.at(i);
+			for (int k = 0; k < 3; ++k)
+			{
+				const UMVec3d& vertex = vertex_list.at(face[k]);
+				dx_vertex[i * 3 + k].x = static_cast<float>(vertex.x);
+				dx_vertex[i * 3 + k].y = static_cast<float>(vertex.y);
+				dx_vertex[i * 3 + k].z = static_cast<float>(vertex.z);
+			}
 		}
 		device_context->Unmap(dst_mesh->vertex_buffer_pointer(), 0);
 	}
@@ -259,39 +107,20 @@ namespace
 		device_context->Map(dst_mesh->normal_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 
 		UMVec3f* dx_normal = (UMVec3f*)resource.pData;
+		const UMMesh::Vec3iList& face_list = src_mesh->face_list();
 		const UMMesh::Vec3dList& normal_list = src_mesh->normal_list();
 		
-		for (size_t i = 0, i_size = normal_list.size(); i < i_size; ++i) {
-			const UMVec3d& normal = normal_list.at(i);
-			dx_normal[i].x = static_cast<float>(normal.x);
-			dx_normal[i].y = static_cast<float>(normal.y);
-			dx_normal[i].z = static_cast<float>(normal.z);
+		for (size_t i = 0, i_size = face_list.size(); i < i_size; ++i) {
+			const UMVec3i& face = face_list.at(i);
+			for (int k = 0; k < 3; ++k)
+			{
+				const UMVec3d& normal = normal_list.at(face[k]);
+				dx_normal[i * 3 + k].x = static_cast<float>(normal.x);
+				dx_normal[i * 3 + k].y = static_cast<float>(normal.y);
+				dx_normal[i * 3 + k].z = static_cast<float>(normal.z);
+			}
 		}
 		device_context->Unmap(dst_mesh->normal_buffer_pointer(), 0);
-	}
-
-	/**
-	 * load vertex color from burger to dx11
-	 */
-	void load_vertex_color(
-		ID3D11DeviceContext* device_context,
-		UMDirectX11MeshPtr dst_mesh, 
-		UMMeshPtr src_mesh)
-	{
-		if (!device_context) return;
-		D3D11_MAPPED_SUBRESOURCE resource;
-		device_context->Map(dst_mesh->vertex_color_buffer_pointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		UMVec3f* dx_vertex_color = (UMVec3f*)resource.pData;
-		const UMMesh::Vec3dList& vertex_color_list = src_mesh->vertex_color_list();
-		
-		for (size_t i = 0, i_size = vertex_color_list.size(); i < i_size; ++i) {
-			const UMVec3d& vertex_color = vertex_color_list.at(i);
-			dx_vertex_color[i].x = static_cast<float>(vertex_color.x);
-			dx_vertex_color[i].y = static_cast<float>(vertex_color.y);
-			dx_vertex_color[i].z = static_cast<float>(vertex_color.z);
-		}
-		device_context->Unmap(dst_mesh->vertex_color_buffer_pointer(), 0);
 	}
 	
 	/** 
@@ -365,21 +194,6 @@ namespace
 	}
 	
 	/**
-	 * load vertex color from umio to burger
-	 */
-	void load_vertex_color(UMMeshPtr mesh, const umio::UMMesh& ummesh)
-	{
-		const int size = static_cast<int>(ummesh.vertex_color_list().size());
-		mesh->mutable_vertex_color_list().resize(size);
-		for (int i = 0; i < size; ++i)
-		{
-			const umio::DoubleList& vertex_color = ummesh.vertex_color_list().at(i);
-			UMVec3d umvertex_color( vertex_color.at(0), vertex_color.at(1), vertex_color.at(2) );
-			mesh->mutable_vertex_color_list().at(i) = umvertex_color;
-		}
-	}
-
-	/**
 	 * load uv  from umio to burger
 	 */
 	void load_uv(UMMeshPtr mesh, const umio::UMMesh& ummesh)
@@ -389,7 +203,7 @@ namespace
 		for (int i = 0; i < size; ++i)
 		{
 			const umio::DoubleList& uv = ummesh.uv_list().at(i);
-			UMVec2d umuv( uv.at(0), uv.at(1) );
+			UMVec2d umuv( uv.at(0), 1.0 - uv.at(1) );
 			mesh->mutable_uv_list().at(i) = umuv;
 		}
 	}
@@ -406,12 +220,12 @@ namespace
 		{
 			const umio::UMMaterial& material = ummesh.material_list().at(i);
 			UMMaterialPtr ummaterial = std::make_shared<UMMaterial>();
-			ummaterial->set_ambient(to_um(material.ambient()));
-			ummaterial->set_diffuse(to_um(material.diffuse()));
-			ummaterial->set_specular(to_um(material.specular()));
-			ummaterial->set_emissive(to_um(material.emissive()));
-			ummaterial->set_refrection(to_um(material.refrection()));
-			ummaterial->set_transparent(to_um(material.transparent()));
+			ummaterial->set_ambient(to_um_material_value(material.ambient()));
+			ummaterial->set_diffuse(to_um_material_value(material.diffuse()));
+			ummaterial->set_specular(to_um_material_value(material.specular()));
+			ummaterial->set_emissive(to_um_material_value(material.emissive()));
+			ummaterial->set_refrection(to_um_material_value(material.refrection()));
+			ummaterial->set_transparent(to_um_material_value(material.transparent()));
 			ummaterial->set_shininess(material.shininess());
 			ummaterial->set_transparency_factor(material.transparency_factor());
 			ummaterial->set_reflection_factor(material.reflection_factor());
@@ -419,6 +233,19 @@ namespace
 			ummaterial->set_specular_factor(material.specular_factor());
 			ummaterial->set_emissive_factor(material.emissive_factor());
 			ummaterial->set_ambient_factor(material.ambient_factor());
+			
+			// load texture through dx11
+			const int texture_count = static_cast<int>(material.texture_list().size());
+			for (int k = 0; k < texture_count; ++k)
+			{
+				const umio::UMTexture& texture = material.texture_list().at(k);
+				const std::string& absolute_or_relative_file_name = texture.file_name();
+				std::u16string str = UMStringUtil::utf8_to_utf16(absolute_or_relative_file_name);
+				std::u16string file_name = UMPath::get_file_name(str);
+				std::u16string path = UMPath::resource_absolute_path(file_name);
+				ummaterial->mutable_texture_path_list().push_back(path);
+			}
+
 			const int polygon_count = static_cast<int>(std::count(
 				ummesh.material_index_list().begin(), 
 				ummesh.material_index_list().end(),
@@ -460,13 +287,59 @@ namespace
 		
 		// store vertex index and material index by material order
 		umio::IntListVec sorted_vertex_index;
+		umio::IntList sorted_material_index;
+		umio::DoubleListVec sorted_uv;
 		sorted_vertex_index.resize(index_size);
+		sorted_material_index.resize(index_size);
+		if (!src_mesh.uv_list().empty())
+		{
+			sorted_uv.resize(index_size * 3);
+		}
+
 		for (int i = 0; i < index_size; ++i)
 		{
 			IndexPair& pair = index_pair_list[i];
-			src_mesh.mutable_material_index()[i] = pair.first;
+			sorted_material_index[i] = pair.first;
 			sorted_vertex_index[i] = src_mesh.vertex_index_list().at(pair.second);
+			if (!src_mesh.uv_list().empty())
+			{
+				for (int k = 0; k < 3; ++k)
+				{
+					sorted_uv[i * 3 + k] = src_mesh.uv_list().at(pair.second * 3 + k);
+				}
+			}
 		}
+		src_mesh.mutable_vertex_index_list().swap(sorted_vertex_index);
+		src_mesh.mutable_material_index().swap(sorted_material_index);
+		if (!src_mesh.uv_list().empty())
+		{
+			src_mesh.mutable_uv_list().swap(sorted_uv);
+		}
+	}
+
+	/**
+	 * convert vertices to triangle list
+	 */
+	void convert_to_triangle_list(umio::UMMesh& src_mesh)
+	{
+		const int vertex_index_size = static_cast<int>(src_mesh.vertex_index_list().size());
+		umio::DoubleListVec triangle_list;
+		triangle_list.resize(vertex_index_size * 3);
+		
+		umio::DoubleListVec normal_list;
+		normal_list.resize(vertex_index_size * 3);
+		
+		for (int i = 0; i < vertex_index_size; ++i)
+		{
+			const umio::IntList& vertex_index = src_mesh.vertex_index_list().at(i);
+			for (int k = 0; k < 3; ++k)
+			{
+				triangle_list[i * 3 + k] = src_mesh.vertex_list().at(vertex_index[k]);
+				normal_list[i * 3 + k] = src_mesh.normal_list().at(vertex_index[k]);
+			}
+		}
+		src_mesh.mutable_vertex_list().swap(triangle_list);
+		src_mesh.mutable_normal_list().swap(normal_list);
 	}
 
 } // anonymouse namespace
@@ -498,143 +371,9 @@ bool UMModelIO::import_mesh_list(UMMeshList& dst, const umio::UMObjectPtr src)
 		load_vertex(mesh, ummesh);
 		load_normal(mesh, ummesh);
 		load_uv(mesh, ummesh);
-		load_vertex_color(mesh, ummesh);
-		mesh->update_box_by_vertex();
+		mesh->update_box();
 	}
 	return result;
-}
-
-	
-/**
- * import directx11 mesh list
- */
-bool UMModelIO::import_dx11_mesh_list(
-	ID3D11Device *device_pointer,
-	UMDirectX11MeshList& dst, 
-	const umio::UMObjectPtr src)
-{
-	if (!src) return false;
-	
-	ID3D11DeviceContext* device_context(NULL);
-	device_pointer->GetImmediateContext(&device_context);
-
-	bool result = false;
-	umio::UMMesh::IDToMeshMap::iterator it = src->mutable_mesh_map().begin();
-	for (; it != src->mutable_mesh_map().end(); ++it)
-	{
-		umio::UMMesh& ummesh = (*it).second;
-		
-		sort_by_material(ummesh);
-
-		UMDirectX11MeshPtr mesh(std::make_shared<UMDirectX11Mesh>());
-		
-		// create index buffer
-		if (ummesh.vertex_index_list().size() > 0) {
-			size_t size = ummesh.vertex_index_list().size();
-
-			D3D11_BUFFER_DESC desc;
-			ZeroMemory(&desc, sizeof(desc));
-			desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec3i) * size);
-			desc.Usage          = D3D11_USAGE_DYNAMIC;
-			desc.BindFlags      = D3D11_BIND_INDEX_BUFFER;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			device_pointer->CreateBuffer(&desc, NULL, mesh->p_index_buffer_pointer());
-			if (!mesh->index_buffer_pointer()) {
-				SAFE_RELEASE(device_context);
-				return false;
-			} else {
-				load_vertex_index(device_context, mesh, ummesh);
-			}
-		}
-
-		// create vertex buffer
-		if (ummesh.vertex_list().size() > 0) {
-			size_t size = ummesh.vertex_list().size();
-
-			D3D11_BUFFER_DESC desc;
-			ZeroMemory(&desc, sizeof(desc));
-			desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec3f) * size);
-			desc.Usage          = D3D11_USAGE_DYNAMIC;
-			desc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			device_pointer->CreateBuffer(&desc, NULL, mesh->p_vertex_buffer_pointer());	
-			if (!mesh->vertex_buffer_pointer()) {
-				SAFE_RELEASE(device_context);
-				return false;
-			} else {
-				load_vertex(device_context, mesh, ummesh);
-			}
-		}
-
-		// create normal buffer
-		if (ummesh.normal_list().size() > 0) {
-			size_t size = ummesh.normal_list().size();
-
-			D3D11_BUFFER_DESC desc;
-			ZeroMemory(&desc, sizeof(desc));
-			desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec3f) * size);
-			desc.Usage          = D3D11_USAGE_DYNAMIC;
-			desc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			device_pointer->CreateBuffer(&desc, 0, mesh->p_normal_buffer_pointer());	
-			if (!mesh->normal_buffer_pointer()) {
-				SAFE_RELEASE(device_context);
-				return false;
-			} else {
-				load_normal(device_context, mesh, ummesh);
-			}
-		}
-		
-		// create vertex color buffer
-		if (ummesh.vertex_color_list().size() > 0) {
-			size_t size = ummesh.vertex_color_list().size();
-
-			D3D11_BUFFER_DESC desc;
-			ZeroMemory(&desc, sizeof(desc));
-			desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec3f) * size);
-			desc.Usage          = D3D11_USAGE_DYNAMIC;
-			desc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			device_pointer->CreateBuffer(&desc, 0, mesh->p_vertex_color_buffer_pointer());	
-			if (!mesh->vertex_color_buffer_pointer()) {
-				SAFE_RELEASE(device_context);
-				return false;
-			} else {
-				load_vertex_color(device_context, mesh, ummesh);
-			}
-		}
-		
-		// create uv buffer
-		if (ummesh.uv_list().size() > 0) {
-			size_t size = ummesh.uv_list().size();
-
-			D3D11_BUFFER_DESC desc;
-			ZeroMemory(&desc, sizeof(desc));
-			desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec2f) * size);
-			desc.Usage          = D3D11_USAGE_DYNAMIC;
-			desc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			device_pointer->CreateBuffer(&desc, NULL, mesh->p_uv_buffer_pointer());
-			if (!mesh->uv_buffer_pointer()) {
-				SAFE_RELEASE(device_context);
-				return false;
-			} else {
-				load_uv(device_context, mesh, ummesh);
-			}
-		}
-
-		load_material(device_context, mesh, ummesh);
-
-		dst.push_back(mesh);
-	}
-
-	SAFE_RELEASE(device_context);
-	return true;
 }
 
 /**
@@ -674,7 +413,8 @@ UMDirectX11MeshPtr UMModelIO::convert_mesh_to_dx11_mesh(
 
 	// create vertex buffer
 	if (src->vertex_list().size() > 0) {
-		size_t size = src->vertex_list().size();
+		// create full triangle verts for uv
+		size_t size = src->face_list().size() * 3;
 
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -694,7 +434,8 @@ UMDirectX11MeshPtr UMModelIO::convert_mesh_to_dx11_mesh(
 
 	// create normal buffer
 	if (src->normal_list().size() > 0) {
-		size_t size = src->normal_list().size();
+		// create full triangle normals for uv
+		size_t size = src->face_list().size() * 3;
 
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -709,26 +450,6 @@ UMDirectX11MeshPtr UMModelIO::convert_mesh_to_dx11_mesh(
 			return UMDirectX11MeshPtr();
 		} else {
 			load_normal(device_context, mesh, src);
-		}
-	}
-		
-	// create vertex color buffer
-	if (src->vertex_color_list().size() > 0) {
-		size_t size = src->vertex_color_list().size();
-
-		D3D11_BUFFER_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		desc.ByteWidth      = static_cast<UINT>(sizeof(UMVec3f) * size);
-		desc.Usage          = D3D11_USAGE_DYNAMIC;
-		desc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-		device_pointer->CreateBuffer(&desc, 0, mesh->p_vertex_color_buffer_pointer());	
-		if (!mesh->vertex_color_buffer_pointer()) {
-			SAFE_RELEASE(device_context);
-			return UMDirectX11MeshPtr();
-		} else {
-			load_vertex_color(device_context, mesh, src);
 		}
 	}
 		

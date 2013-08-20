@@ -11,16 +11,21 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+
 #include "UMMacro.h"
+#include "UMVector.h"
 
 namespace burger
 {
 
 class UMPrimitive;
 typedef std::shared_ptr<UMPrimitive> UMPrimitivePtr;
+typedef std::vector<UMPrimitivePtr> UMPrimitiveList;
 
 class UMRay;
 class UMShaderParameter;
+class UMBox;
 
 /**
  * interface of primitive
@@ -45,6 +50,16 @@ public:
 	 * @param [in] ray a ray
 	 */
 	virtual bool intersects(const UMRay& ray) const = 0;
+	
+	/**
+	 * get box
+	 */
+	virtual const UMBox& box() const = 0;
+	
+	/**
+	 * update AABB
+	 */
+	virtual void update_box() = 0;
 };
 
 } // burger

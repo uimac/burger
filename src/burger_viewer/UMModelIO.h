@@ -36,17 +36,6 @@ public:
 		const umio::UMObjectPtr src);
 	
 	/**
-	 * import directx11 mesh list
-	 * @param [in] device directx11 device pointer
-	 * @param [out] dst distination mesh list
-	 * @param [in] src source object
-	 */
-	static bool import_dx11_mesh_list(
-		ID3D11Device *device_pointer,
-		UMDirectX11MeshList& dst, 
-		const umio::UMObjectPtr src);
-
-	/**
 	 * convert burger mesh to directx11 mesh
 	 * @param [in] device directx11 device pointer
 	 * @param [in] src source burger mesh

@@ -41,12 +41,34 @@ bool UMDirectX11Texture::load(
 		resource_view_pointer_ = NULL;
 		return false;
 	}
+	
+	ID3D11DeviceContext* device_context(NULL);
+	device_pointer->GetImmediateContext(&device_context);
+	
+	// create default sampler state
+	{
+		D3D11_SAMPLER_DESC sampler_desc;
+		::ZeroMemory(&sampler_desc, sizeof(D3D11_SAMPLER_DESC));
+		sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.MipLODBias = 0;
+		sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampler_desc.MinLOD = 0;
+		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		if FAILED(device_pointer->CreateSamplerState(
+			&sampler_desc, 
+			&sampler_state_pointer_ ))
+		{
+			SAFE_RELEASE(device_context);
+			return false;
+		}
+	}
 
 	if (can_overwrite_)
 	{
-		ID3D11DeviceContext* device_context(NULL);
-		device_pointer->GetImmediateContext(&device_context);
-		
 		UMImagePtr image = convert_to_image(device_pointer, device_context);
 		if (image)
 		{
@@ -57,8 +79,9 @@ bool UMDirectX11Texture::load(
 				convert_from_image(device_pointer, *fliped);
 			}
 		}
-		SAFE_RELEASE(device_context);
 	}
+
+	SAFE_RELEASE(device_context);
 
 	return true;
 }
@@ -123,6 +146,34 @@ bool UMDirectX11Texture::convert_from_image(
 	{
 		return false;
 	}
+	
+	ID3D11DeviceContext* device_context(NULL);
+	device_pointer->GetImmediateContext(&device_context);
+
+	// create default sampler state
+	if (!sampler_state_pointer_)
+	{
+		D3D11_SAMPLER_DESC sampler_desc;
+		::ZeroMemory(&sampler_desc, sizeof(D3D11_SAMPLER_DESC));
+		sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampler_desc.MipLODBias = 0;
+		sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampler_desc.MinLOD = 0;
+		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		if FAILED(device_pointer->CreateSamplerState(
+			&sampler_desc, 
+			&sampler_state_pointer_ ))
+		{
+			SAFE_RELEASE(device_context);
+			return false;
+		}
+	}
+	SAFE_RELEASE(device_context);
+
 	return true;
 }
 
@@ -195,7 +246,7 @@ UMImagePtr UMDirectX11Texture::convert_to_image(
 		image->set_width(texture2d_desc.Width);
 		image->set_height(texture2d_desc.Height);
 		image->mutable_list().resize(image->width() * image->height());
-		const double ffinv = 1.0 / 256.0;
+		const double ffinv = 1.0 / static_cast<double>(0xFF);
 		unsigned char* data_pointer = reinterpret_cast<unsigned char*>(subresource.pData);
 		for (int y = 0, height = image->height(); y < height; ++y)
 		{

@@ -1,5 +1,5 @@
 /**
- * @file UMRaytracer.h
+ * @file UMRayTracer.h
  * a raytracer
  *
  * @author tori31001 at gmail.com
@@ -16,13 +16,15 @@
 #include "UMRenderer.h"
 #include "UMVector.h"
 #include "UMRay.h"
+#include "UMBvh.h"
 #include "UMShaderParameter.h"
+#include "UMRandomSampler.h"
 
 namespace burger
 {
 
-class UMRaytracer;
-typedef std::shared_ptr<UMRaytracer> UMRaytracerPtr;
+class UMRayTracer;
+typedef std::shared_ptr<UMRayTracer> UMRayTracerPtr;
 
 class UMScene;
 class UMRenderParameter;
@@ -30,17 +32,17 @@ class UMRenderParameter;
 /**
  * a raytracer
  */
-class UMRaytracer : public UMRenderer
+class UMRayTracer : public UMRenderer
 {
-	DISALLOW_COPY_AND_ASSIGN(UMRaytracer);
+	DISALLOW_COPY_AND_ASSIGN(UMRayTracer);
 public:
-	UMRaytracer() : 
+	UMRayTracer() : 
 		current_x_(0),
 		current_y_(0),
-		ray_( UMVec3d(0, 0, 500), UMVec3d(0) )
+		ray_(UMVec3d(0, 0, 500), UMVec3d(0))
 	{}
 
-	~UMRaytracer() {}
+	~UMRayTracer() {}
 	
 	/**
 	 * initialize
@@ -57,14 +59,13 @@ public:
 	/**
 	 * get renderer type
 	 */
-	virtual RendererType type() const { return eRaytraceRenderer; }
+	virtual RendererType type() const { return eSimpleRayTracer; }
 	
 	/**
 	 * render
 	 * @param [in] scene target scene
 	 * @param [in,out] parameter parameters for rendering
-	 * @retval true still render
-	 * @retval false render finished or failed
+	 * @retval success or failed
 	 */
 	virtual bool render(const UMScene& scene, UMRenderParameter& parameter);
 	
@@ -72,7 +73,8 @@ public:
 	 * progressive render
 	 * @param [in] scene target scene
 	 * @param [in,out] parameter parameters for rendering
-	 * @retval render finished or still render
+	 * @retval true still render
+	 * @retval false render finished or failed
 	 */
 	virtual bool progress_render(const UMScene& scene, UMRenderParameter& parameter);
 
@@ -82,6 +84,7 @@ private:
 	int current_y_;
 	UMRay ray_;
 	UMShaderParameter shader_param_;
+	UMRandomSampler sampler_;
 };
 
 } // burger

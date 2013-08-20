@@ -42,14 +42,16 @@ public:
 	int win_proc(HWND hWnd, unsigned int msg, WPARAM wParam, LPARAM lParam);
 
 private:
-	UMWindow() : width_(800), height_(600) {}
+	UMWindow() : width_(1280), height_(720) {
+		viewer = UMDirectX11Viewer::create();
+	}
 
 	/// initial client width
 	int width_;
 	/// initial client height
 	int height_;
 	
-	UMDirectX11Viewer viewer;
+	UMDirectX11ViewerPtr viewer;
 
 };
 

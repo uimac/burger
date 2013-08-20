@@ -7,13 +7,12 @@
  * Licensed  under the MIT license. 
  *
  */
-#pragma once
-
 #include "UMMesh.h"
 #include "UMMacro.h"
 #include "UMVector.h"
 #include "UMTriangle.h"
 #include "UMShaderParameter.h"
+#include "UMRay.h"
 
 #include <vector>
 
@@ -74,10 +73,10 @@ bool UMMesh::create_normals(bool is_smooth)
 /**
  * update AABB
  */
-void UMMesh::update_box_by_vertex()
+void UMMesh::update_box()
 {
-	box_.set_minimum(UMVec3d(0));
-	box_.set_maximum(UMVec3d(0));
+	box_.set_minimum(UMVec3d(std::numeric_limits<double>::infinity()));
+	box_.set_maximum(UMVec3d(-std::numeric_limits<double>::infinity()));
 	
 	const int vertex_size = static_cast<int>(vertex_list().size());
 	for (int i = 0; i < vertex_size; ++i)
@@ -107,30 +106,68 @@ UMMaterialPtr UMMesh::material_from_face_index(int face_index) const
 /**
  * ray mesh intersection
  */
-bool UMMesh::intersects(const UMRay& ray, UMShaderParameter& param) const
+bool UMMesh::intersects(const UMRay& ray, UMShaderParameter& dst_parameter) const
 {
 	if (!box_.intersects(ray)) return false;
-	
+	double closest_distance = std::numeric_limits<double>::max();
+
+	UMShaderParameter parameter;
+
+	bool result = false;
 	const int face_size = static_cast<int>(face_list().size());
 	for (int i = 0; i < face_size; ++i)
 	{
-		UMVec3i face = face_list().at(i);
+		const UMVec3i& face = face_list().at(i);
 		const UMVec3d& v0 = vertex_list().at(face.x);
 		const UMVec3d& v1 = vertex_list().at(face.y);
 		const UMVec3d& v2 = vertex_list().at(face.z);
-		if (UMTriangle::intersects(v0, v1, v2, ray, param))
+		if (UMTriangle::intersects(v0, v1, v2, ray, parameter))
 		{
-			if (UMMaterialPtr material = material_from_face_index(i))
+			if (parameter.distance < closest_distance)
 			{
-				const UMVec4d& diffuse = material->diffuse();
-				param.color.x = diffuse.x;
-				param.color.y = diffuse.y;
-				param.color.z = diffuse.z;
+				result = true;
+				closest_distance = parameter.distance;
+				// normal
+				const UMVec3d& n0 = normal_list().at(face.x);
+				const UMVec3d& n1 = normal_list().at(face.y);
+				const UMVec3d& n2 = normal_list().at(face.z);
+				parameter.normal = (
+					n0 * parameter.uvw.x + 
+					n1 * parameter.uvw.y + 
+					n2 * parameter.uvw.z).normalized();
+
+				if (UMMaterialPtr material = material_from_face_index(i))
+				{
+					const UMVec4d& diffuse = material->diffuse();
+					parameter.color.x = diffuse.x;
+					parameter.color.y = diffuse.y;
+					parameter.color.z = diffuse.z;
+					if (!uv_list().empty() && !material->texture_list().empty()) {
+						// uv
+						const UMVec2d& uv0 = uv_list().at(i * 3 + 0);
+						const UMVec2d& uv1 = uv_list().at(i * 3 + 1);
+						const UMVec2d& uv2 = uv_list().at(i * 3 + 2);
+						UMVec2d uv = UMVec2d(
+							uv0 * parameter.uvw.x +
+							uv1 * parameter.uvw.y +
+							uv2 * parameter.uvw.z);
+						uv.x = um_clip(uv.x);
+						uv.y = um_clip(uv.y);
+						const UMImagePtr texture = material->texture_list().at(0);
+						const int x = static_cast<int>(texture->width() * uv.x);
+						const int y = static_cast<int>(texture->height() * uv.y);
+						const int pixel = y * texture->width() + x;
+						const UMVec4d& pixel_color = texture->list().at(pixel);
+						parameter.color.x *= pixel_color.x;
+						parameter.color.y *= pixel_color.y;
+						parameter.color.z *= pixel_color.z;
+					}
+				}
+				dst_parameter = parameter;
 			}
-			return true;
 		}
 	}
-	return false;
+	return result;
 }
 
 	
@@ -143,7 +180,7 @@ bool UMMesh::intersects(const UMRay& ray) const
 	const int face_size = static_cast<int>(face_list().size());
 	for (int i = 0; i < face_size; ++i)
 	{
-		UMVec3i face = face_list().at(i);
+		const UMVec3i& face = face_list().at(i);
 		const UMVec3d& v0 = vertex_list().at(face.x);
 		const UMVec3d& v1 = vertex_list().at(face.y);
 		const UMVec3d& v2 = vertex_list().at(face.z);

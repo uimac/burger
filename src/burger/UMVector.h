@@ -176,9 +176,16 @@ public:
 	}
 
 	/**
+	 * multiply
+	 */
+	UMVector2 multiply(const UMVector2 &v) const {
+		return UMVector2(x * v.x, y * v.y);
+	}
+
+	/**
 	 * get normalized
 	 */
-	UMVector2 normalized() {
+	UMVector2 normalized() const {
 		UMVector2 dst(*this);
 		T a = x * x + y * y;
 		if (a > std::numeric_limits<T>::epsilon()) {
@@ -204,7 +211,6 @@ public:
 	T length() const {
 		return sqrt(length_sq());
 	}
-
 };
 
 /**
@@ -372,6 +378,13 @@ public:
 	}
 
 	/**
+	 * multiply
+	 */
+	UMVector3 multiply(const UMVector3 &v) const {
+		return UMVector3(x * v.x, y * v.y, z * v.z);
+	}
+
+	/**
 	 * get normalized
 	 */
 	UMVector3 normalized() const {
@@ -460,6 +473,11 @@ public:
 	 * get
 	 */
 	const T& operator [] (int i) const { return (&x)[i]; }
+
+	/** 
+	 * get vector3
+	 */
+	UMVector3<T> xyz() const { return UMVector3<T>(x, y, z); }
 
 	/**
 	 * compare equal
@@ -575,9 +593,16 @@ public:
 	}
 
 	/**
+	 * multiply
+	 */
+	UMVector4 multiply(const UMVector4 &v) const {
+		return UMVector4(x * v.x, y * v.y, z * v.z, w * v.w);
+	}
+
+	/**
 	 * get normalized
 	 */
-	UMVector4 normalized() {
+	UMVector4 normalized() const {
 		UMVector4 dst(*this);
 		T a = x * x + y * y + z * z + w * w;
 		if (a > std::numeric_limits<T>::epsilon()) {

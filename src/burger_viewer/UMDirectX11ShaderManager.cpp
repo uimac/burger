@@ -82,14 +82,14 @@ bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer, ShaderType typ
 	} 
 	else if (type == eBoard)
 	{
-		vs_path = UMPath::resource_absolute_path(_T("default_vs.hlsl"));
-		ps_path = UMPath::resource_absolute_path(_T("default_ps.hlsl"));
+		vs_path = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16("default_vs.hlsl"));
+		ps_path = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16("default_ps.hlsl"));
 	}
 	else if (type == eModel)
 	{
 		UINT sizes[] = {
 			// material
-			sizeof(UMVec4f) * 3
+			sizeof(UMVec4f) * 4
 		};
 		
 		for (int i = 0, isize = (sizeof(sizes) / sizeof(sizes[0])); i < isize; ++i)
@@ -111,8 +111,8 @@ bool UMDirectX11ShaderManager::init(ID3D11Device *device_pointer, ShaderType typ
 			constant_buffer_list_.push_back(buffer);
 		}
 
-		vs_path = UMPath::resource_absolute_path(_T("model_vs.hlsl"));
-		ps_path = UMPath::resource_absolute_path(_T("model_ps.hlsl"));
+		vs_path = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16("model_vs.hlsl"));
+		ps_path = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16("model_ps.hlsl"));
 	}
 	else
 	{
@@ -184,7 +184,7 @@ ID3D11InputLayout* UMDirectX11ShaderManager::create_input_layout(
 		D3D11_INPUT_ELEMENT_DESC layout[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			//{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		if FAILED(device_pointer->CreateInputLayout(

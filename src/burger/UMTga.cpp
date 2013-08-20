@@ -8,8 +8,6 @@
  * Licensed  under the MIT license. 
  *
  */
-#pragma once
-
 #include "UMTga.h"
 #include "UMImage.h"
 #include "UMVector.h"

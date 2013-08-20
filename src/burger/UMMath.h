@@ -43,8 +43,20 @@ T um_lerp(T left, T right, T s)
 /**
  * signum
  */
-template <typename T> int um_sign(T val) {
+template <typename T>
+int um_sign(T val) {
 	return (T(0) < val) - (val < T(0));
 }
+
+/**
+ * clip
+ */
+template <typename T>
+T um_clip(T val) {
+	if (val > (T)1.0) val = (T)1.0;
+	if (val < (T)0.0) val = (T)0.0;
+	return val;
+}
+
 
 } // burger

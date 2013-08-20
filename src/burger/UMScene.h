@@ -26,6 +26,9 @@ class UMScene;
 typedef std::shared_ptr<UMScene> UMScenePtr;
 typedef std::weak_ptr<UMScene> UMSceneWeakPtr;
 
+class UMBvh;
+typedef std::shared_ptr<UMBvh> UMBvhPtr;
+
 /**
  * 3D scene including many objects, lights, cameras, ...
  */
@@ -37,9 +40,6 @@ public:
 	UMScene() { init(1280, 720); }
 	UMScene(int width, int height) { init(width, height); }
 	~UMScene() {}
-	
-	typedef std::vector< UMPrimitivePtr > PrimitiveList;
-	typedef std::vector< UMLightPtr > LightList;
 
 	void create_sample_scene_1();
 	void create_sample_scene_2();
@@ -72,12 +72,12 @@ public:
 	/**
 	 * get primitive list
 	 */
-	const PrimitiveList& primitive_list() const { return primitive_list_; }
+	const UMPrimitiveList& primitive_list() const { return primitive_list_; }
 
 	/**
 	 * get primitive list
 	 */
-	PrimitiveList& mutable_primitive_list() { return primitive_list_; }
+	UMPrimitiveList& mutable_primitive_list() { return primitive_list_; }
 	
 	/**
 	 * get mesh group list
@@ -92,27 +92,44 @@ public:
 	/**
 	 * get light list
 	 */
-	const LightList& light_list() const { return light_list_; }
+	const UMLightList& light_list() const { return light_list_; }
 
 	/**
 	 * get light list
 	 */
-	LightList& mutable_light_list() { return light_list_; }
+	UMLightList& mutable_light_list() { return light_list_; }
 	
 	/**
 	 * get background color
 	 */
 	UMVec3d background_color() const { return UMVec3d(0.1, 0.1, 0.1); }
 
+	/**
+	 * get bvh
+	 */
+	UMBvhPtr bvh() const { return bvh_; }
+
+	/**
+	 * update bvh
+	 */
+	bool update_bvh();
+
+	/**
+	 * connect listener to all event on scene
+	 */
+	void connect_to_all_events(UMListenerPtr listener);
+
 private:
+
 	int width_;
 	int height_;
 
 	UMCameraPtr camera_;
-	PrimitiveList primitive_list_;
-	LightList light_list_;
+	UMPrimitiveList primitive_list_;
+	UMLightList light_list_;
 
 	UMMeshGroupList mesh_group_list_;
+	UMBvhPtr bvh_;
 };
 
 } // burger

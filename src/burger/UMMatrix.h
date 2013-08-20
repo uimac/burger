@@ -136,6 +136,20 @@ public:
 	}
 
 	/**
+	 * multiply (transformed vector)
+	 */
+	UMVector4<T> operator * (const UMVector4<T>& v) const
+	{
+		const T tmp[] = {
+			v[0]*m[0][0] + v[1]*m[1][0] + 1.0f *m[3][0],
+			v[0]*m[0][1] + v[1]*m[1][1] + 1.0f *m[3][1],
+			v[0]*m[0][2] + v[1]*m[1][2] + 1.0f *m[3][2],
+			v[0]*m[0][3] + v[1]*m[1][3] + 1.0f *m[3][3]
+		};
+		return UMVector4<T>(tmp[0], tmp[1], tmp[2], tmp[3]);
+	}
+
+	/**
 	 * identity
 	 */
 	void identity()

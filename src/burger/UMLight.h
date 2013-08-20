@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <vector>
+
 #include "UMMacro.h"
 #include "UMPrimitive.h"
 #include "UMVector.h"
@@ -20,6 +22,7 @@ namespace burger
 class UMLight;
 typedef std::shared_ptr<UMLight> UMLightPtr;
 typedef std::weak_ptr<UMLight> UMLightWeakPtr;
+typedef std::vector< UMLightPtr > UMLightList;
 
 /**
  * a light
@@ -34,7 +37,8 @@ public:
 	 * @param [in] position light position
 	 */
 	UMLight(const UMVec3d& position) :
-		position_(position){}
+		position_(position),
+		color_(13) {}
 	
 	~UMLight() {}
 
@@ -49,8 +53,28 @@ public:
 	 */
 	void set_position(const UMVec3d& position) { position_ = position; }
 
+	/** 
+	 * get color
+	 */
+	UMVec3d color() const { return color_; }
+
+	/**
+	 * set color
+	 * @param [in] color light color
+	 */
+	void set_color(const UMVec3d& color) { color_ = color; }
+	
+	/** 
+	 * sample a point
+	 * @param [out] intensity light intensity
+	 * @param [out] direction light direction
+	 * @param [in] parameter shader parameter on sample point
+	 */
+	virtual bool sample(UMVec3d& intensity, UMVec3d& direction, const UMShaderParameter& parameter) = 0;
+	
 private:
 	UMVec3d position_;
+	UMVec3d color_;
 };
 
 } // burger

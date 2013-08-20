@@ -14,6 +14,7 @@
 #include "UMPrimitive.h"
 #include "UMVector.h"
 #include "UMMesh.h"
+#include "UMBox.h"
 
 namespace burger
 {
@@ -32,56 +33,24 @@ class UMTriangle : public UMPrimitive
 	DISALLOW_COPY_AND_ASSIGN(UMTriangle);
 public:
 	UMTriangle() :
-		index_(0),
-		normal_(0),
-		color_(0){}
+		vertex_index_(0),
+		face_index_(0),
+		normal_(0) {}
 
 	/**
 	 * @param [in] index center index
 	 * @param [in] normal normal
 	 */
-	UMTriangle(UMMeshPtr mesh, const UMVec3i& index) :
+	UMTriangle(UMMeshPtr mesh, const UMVec3i& vertex_index, int face_index) :
 		mesh_(mesh),
-		index_(index),
-		normal_(0),
-		color_(0){}
+		vertex_index_(vertex_index),
+		face_index_(face_index),
+		normal_(0)
+	{
+		 update_box();
+	}
 	
 	~UMTriangle() {}
-
-	/**
-	 * get index
-	 */
-	const UMVec3i& index() const { return index_; }
-	
-	/**
-	 * set index
-	 * @param [in] index source index
-	 */
-	void set_index(const UMVec3i& index) { index_ = index; }
-
-	/**
-	 * get normal
-	 */
-	const UMVec3d& normal() const { return normal_; }
-	
-	/**
-	 * set normal
-	 * @param [in] normal source normal
-	 */
-	void set_normal(const UMVec3d& normal) { normal_ = normal; }
-
-	/**
-	 * set color
-	 * @param [in] color source color
-	 */
-	void set_color(const UMVec3d& color) { color_ = color; }
-
-	/**
-	 * ray triangle intersection
-	 * @param [in] ray a ray
-	 * @param [in,out] parameter shading parameters
-	 */
-	virtual bool intersects(const UMRay& ray, UMShaderParameter& parameter) const;
 	
 	/**
 	 * ray triangle intersection static version
@@ -90,6 +59,7 @@ public:
 	 * @param [in] v3 vertex 3
 	 * @param [in] ray a ray
 	 * @param [in,out] parameter shading parameters
+	 * @param [out] barycentric barycentric coordinate value
 	 */
 	static bool intersects(
 		const UMVec3d& v1,
@@ -97,12 +67,6 @@ public:
 		const UMVec3d& v3,
 		const UMRay& ray, 
 		UMShaderParameter& parameter);
-
-	/**
-	 * ray triangle intersection
-	 * @param [in] ray a ray
-	 */
-	virtual bool intersects(const UMRay& ray) const;
 
 	/**
 	 * ray triangle intersection static version
@@ -117,14 +81,69 @@ public:
 		const UMVec3d& v3,
 		const UMRay& ray);
 
+	/**
+	 * get index
+	 */
+	const UMVec3i& vertex_index() const { return vertex_index_; }
+	
+	/**
+	 * set index
+	 * @param [in] index source index
+	 */
+	void set_vertex_index(const UMVec3i& index) { vertex_index_ = index; }
 
+	/**
+	 * get face index
+	 */
+	int face_index() const { return face_index_; }
+
+	/**
+	 * set face index
+	 */
+	void set_face_index(const int face_index) { face_index_ = face_index; }
+
+	/**
+	 * get normal
+	 */
+	const UMVec3d& normal() const { return normal_; }
+	
+	/**
+	 * set normal
+	 * @param [in] normal source normal
+	 */
+	void set_normal(const UMVec3d& normal) { normal_ = normal; }
+
+	/**
+	 * ray triangle intersection
+	 * @param [in] ray a ray
+	 * @param [in,out] parameter shading parameters
+	 */
+	virtual bool intersects(const UMRay& ray, UMShaderParameter& parameter) const;
+
+	/**
+	 * ray triangle intersection
+	 * @param [in] ray a ray
+	 */
+	virtual bool intersects(const UMRay& ray) const;
+	
+	/**
+	 * get box
+	 */
+	virtual const UMBox& box() const { return box_; }
+	
+	/**
+	 * update AABB
+	 */
+	virtual void update_box();
+	
 private:
 	UMMeshPtr mesh_;
-
-	UMVec3i index_;
+	
+	int face_index_;
+	UMVec3i vertex_index_;
 	UMVec3d normal_;
 	
-	UMVec3d color_;
+	UMBox box_;
 };
 
 } // burger

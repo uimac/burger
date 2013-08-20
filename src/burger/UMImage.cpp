@@ -14,6 +14,18 @@ namespace burger
 {
 	
 /**
+ * init image
+ */
+bool UMImage::init(int width, int height)
+{
+	width_ = width;
+	height_ = height;
+	buffer_.clear();
+	buffer_.resize(width * height);
+	return true;
+}
+
+/**
  * create r8g8b8a8 buffer
  */
 void UMImage::create_r8g8b8a8_buffer(UMImage::R8G8B8A8Buffer& img) const 

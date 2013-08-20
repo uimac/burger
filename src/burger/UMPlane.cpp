@@ -26,8 +26,8 @@ namespace burger
  */
 bool UMPlane::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 {
-	UMVec3d ray_dir(ray.direction());
-	UMVec3d ray_orig(ray.origin());
+	const UMVec3d& ray_dir = ray.direction();
+	const UMVec3d& ray_orig = ray.origin();
 
 	double angle = normal_.dot(ray.direction());
 	if (fabs(angle) < FLT_EPSILON) {
@@ -41,7 +41,8 @@ bool UMPlane::intersects(const UMRay& ray, UMShaderParameter& parameter) const
 		return false;
 	}
 	
-	parameter.color = color_;
+	parameter.color = material_->diffuse().xyz();
+	parameter.material = material_;
 	parameter.distance = distance;
 	parameter.intersect_point = ray_orig + ray_dir * distance;
 	parameter.normal = normal_;
@@ -54,8 +55,8 @@ bool UMPlane::intersects(const UMRay& ray, UMShaderParameter& parameter) const
  */
 bool UMPlane::intersects(const UMRay& ray) const
 {
-	UMVec3d ray_dir(ray.direction());
-	UMVec3d ray_orig(ray.origin());
+	const UMVec3d& ray_dir = ray.direction();
+	const UMVec3d& ray_orig = ray.origin();
 
 	double angle = normal_.dot(ray.direction());
 	if (fabs(angle) < FLT_EPSILON) {
@@ -100,12 +101,10 @@ UMMeshPtr UMPlane::convert_to_mesh(double width, double height) const
 	mesh->mutable_face_list().push_back(UMVec3i(0, 2, 1));
 	mesh->mutable_face_list().push_back(UMVec3i(2, 3, 1));
 
-	UMMaterialPtr mat = UMMaterial::default_material();
-	mat->set_diffuse(UMVec4d(color_, 1.0));
-	mat->set_polygon_count(static_cast<int>(mesh->face_list().size()));
-	mesh->mutable_material_list().push_back(mat);
+	material_->set_polygon_count(static_cast<int>(mesh->face_list().size()));
+	mesh->mutable_material_list().push_back(material_);
 	mesh->create_normals(true);
-	mesh->update_box_by_vertex();
+	mesh->update_box();
 	return mesh;
 }
 

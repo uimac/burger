@@ -12,6 +12,7 @@ struct Material
 	// .w is specular_factor;
 	float4 specular;
 	float4 ambient;
+	float4 shader_flags;
 };
 
 // world x view x projection
@@ -53,8 +54,8 @@ struct VS_MODEL_IN
 {
 	float3 pos : POSITION;   // vertex position
 	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;   // texture
 	//float4 color : COLOR;      // vertex color
-	//float2 uv : TEXCOORD;   // texture
 };
 
 // vertex shader output
@@ -64,7 +65,7 @@ struct VS_MODEL_OUT
 	float4 normal : NORMAL;
 	float4 color : COLOR0;
 	float4 light_direction: TEXCOORD0;
-	//float2 uv : TEXCOORD0;
+	float2 uv : TEXCOORD1;
 };
 
 float4 phong(Material mat, float3 NL, float3 R, float3 V)

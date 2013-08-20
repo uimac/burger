@@ -14,14 +14,20 @@
     <Filter Include="src\image">
       <UniqueIdentifier>{af7ce0b2-50b5-4d4b-95d8-27f563008ace}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\raytrace_render">
+    <Filter Include="src\render">
       <UniqueIdentifier>{ea58cbfc-f69f-4033-baac-825fb2b20eca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\sampler">
+      <UniqueIdentifier>{8f6db81c-e916-4dd8-9c55-18a31ec037f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\event">
+      <UniqueIdentifier>{9687c921-3169-4daf-aa88-fac531c2ae7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\light">
+      <UniqueIdentifier>{cc06ad78-b5fb-47aa-98ee-e0957a3a792c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\burger\UMRaytracer.cpp">
-      <Filter>src\raytrace_render</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\burger\UMTga.cpp">
       <Filter>src\image</Filter>
     </ClCompile>
@@ -34,35 +40,53 @@
     <ClCompile Include="..\src\burger\UMMain.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\burger\UMScene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\burger\UMImage.cpp">
       <Filter>src\image</Filter>
     </ClCompile>
     <ClCompile Include="..\src\burger\UMTriangle.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\burger\UMCamera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\burger\UMLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\burger\UMMesh.cpp">
       <Filter>src\data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\burger\UMMaterial.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\burger\UMBox.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\burger\UMRandomSampler.cpp">
+      <Filter>src\sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMCamera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMMaterial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMSampler.cpp">
+      <Filter>src\sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMRayTracer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMPathTracer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMBvh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMEvent.cpp">
+      <Filter>src\event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMLight.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\burger\UMAreaLight.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\burger\UMRaytracer.h">
-      <Filter>src\raytrace_render</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\burger\UMVector.h">
       <Filter>src\math</Filter>
     </ClInclude>
@@ -81,18 +105,6 @@
     <ClInclude Include="..\src\burger\UMSphere.h">
       <Filter>src\data</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\burger\UMRenderParameter.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMShaderParameter.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMRenderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\burger\UMMacro.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -101,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="..\src\burger\UMTriangle.h">
       <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMCamera.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\burger\UMMath.h">
       <Filter>src\math</Filter>
@@ -114,17 +123,65 @@
     <ClInclude Include="..\src\burger\UMMeshGroup.h">
       <Filter>src\data</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\burger\UMLight.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\burger\UMMaterial.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\burger\UMPrimitive.h">
       <Filter>src\data</Filter>
     </ClInclude>
     <ClInclude Include="..\src\burger\UMBox.h">
       <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRenderer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRenderParameter.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMShaderParameter.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRandomSampler.h">
+      <Filter>src\sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMSampler.h">
+      <Filter>src\sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMCamera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMMaterial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMRayTracer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMPathTracer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMBvh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMAny.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMEvent.h">
+      <Filter>src\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMEventType.h">
+      <Filter>src\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMListener.h">
+      <Filter>src\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMListenerConnector.h">
+      <Filter>src\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMLight.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\burger\UMAreaLight.h">
+      <Filter>src\light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

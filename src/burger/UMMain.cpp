@@ -12,7 +12,7 @@
 
 #include "UMScene.h"
 #include "UMRenderParameter.h"
-#include "UMRaytracer.h"
+#include "UMRayTracer.h"
 
 #include <iostream>
 
@@ -27,7 +27,7 @@ int main()
 	UMScene scene(width, height);
 	scene.create_sample_scene_1();
 
-	UMRendererPtr renderer(std::make_shared<UMRaytracer>());
+	UMRendererPtr renderer(std::make_shared<UMRayTracer>());
 	UMRenderParameter parameter;
 	renderer->init();
 	renderer->set_width(width);

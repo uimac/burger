@@ -19,46 +19,31 @@
 #include "UMStringUtil.h"
 #include "UMDirectX11Board.h"
 #include "UMDirectX11Texture.h"
+#include "UMRenderer.h"
+#include "UMAny.h"
+#include "UMListener.h"
 
-#include "UMRaytracer.h"
+#include "UMRayTracer.h"
 #include "UMScene.h"
 #include "UMRenderParameter.h"
 #include "UMTime.h"
 #include "UMImage.h"
 #include "UMTriangle.h"
+#include "UMBvh.h"
 
 #include <tchar.h>
 #include <shlwapi.h>
 #include "UMIO.h"
 
-namespace 
-{
-	using namespace burger;
-
-	/// test UMDirectX11Texture
-	void test_umdirectx11texture(
-		ID3D11Device* device_pointer_,
-		ID3D11DeviceContext *device_context_pointer_)
-	{
-		std::u16string inpath = UMPath::resource_absolute_path(_T("rgbwrbrb.png"));
-		UMDirectX11Texture texture(false);
-		if (texture.load(device_pointer_, inpath))
-		{
-			if (UMImagePtr image = texture.convert_to_image(device_pointer_, device_context_pointer_))
-			{
-				if (static_cast<int>(image->list().size() == 8))
-				{
-					UMVec4d r = image->list().at(0);
-					UMVec4d g = image->list().at(1);
-					UMVec4d b = image->list().at(2);
-				}
-			}
-		}
-	}
-} // anonymouse namespace
-
 namespace burger
 {
+	
+UMDirectX11ViewerPtr UMDirectX11Viewer::create()
+{
+	UMDirectX11ViewerPtr viewer = UMDirectX11ViewerPtr(new UMDirectX11Viewer);
+	viewer->self_reference_ = viewer;
+	return viewer;
+}
 
 UMDirectX11Viewer::UMDirectX11Viewer()
 	: 
@@ -78,9 +63,12 @@ UMDirectX11Viewer::UMDirectX11Viewer()
 	// other
 	d3d11_debug_pointer_(NULL),
 	is_left_button_down_(false),
+	is_ctrl_button_down_(false),
 	pre_x_(0),
-	pre_y_(0)
-{}
+	pre_y_(0),
+	scene_(std::make_shared<UMDirectX11Scene>())
+{
+}
 
 UMDirectX11Viewer::~UMDirectX11Viewer()
 {
@@ -153,6 +141,11 @@ bool UMDirectX11Viewer::init(HWND hWnd, int width, int height)
 			desc.StencilEnable	= FALSE;
 			device_pointer_->CreateDepthStencilState( &desc, &depth_stencil_state_pointer_ );
 		}
+
+		// init member
+		handle_ = hWnd;
+		scene_->connect(self_reference_.lock());
+
 		return true;
 	}
 	return false;
@@ -349,12 +342,48 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 	// create test scene
 	{
 		UMTime loadtime("loadtime", true);
-		scene_.init(device_pointer_, width, height);
+		scene_->init(device_pointer_, width, height);
 		
-		std::u16string inpath = UMPath::resource_absolute_path(_T("•́ε•̀٥.bos"));
-		//std::u16string inpath = UMPath::resource_absolute_path(_T("miku9.bos"));
-		scene_.load(device_pointer_, inpath);
+		std::string models[] = {
+			//"•́ε•̀٥.bos",
+			//"miku10.bos",
+			//"cornellbox_empty.bos",
+			//"cornallbox_akari.bos",
+			//"buddha.bos",
+			//"q3.bos",
+			//"bunny.bos",
+			//"monkey2.bos",
+			//"q1.bos",
+			//"cornellbox.bos"
+			"cornellbox_nolight.bos",
+			//"miku_alegro.bos"
+			//"dabrovic-sponza.bos",
+		};
+
+		for (int i = 0, isize = sizeof(models) / sizeof(models[0]); i < isize; ++i)
+		{
+			std::u16string inpath = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16(models[i]));
+			scene_->load(device_pointer_, inpath);
+		}
+		const int size = static_cast<int>(scene_->mutable_render_scene()->mutable_primitive_list().size());
+		//scene_->mutable_render_scene().mutable_primitive_list().at(size-1)->emission = UMVec3d(10.0);
+		//scene_->mutable_render_scene().mutable_primitive_list().at(size-2)->emission = UMVec3d(10.0);
+
+		//std::string debug_count = "primitive count:" + UMStringUtil::number_to_string(
+		//	scene_->mutable_render_scene().mutable_primitive_list().size());
+		//::MessageBoxA(NULL, debug_count.c_str(), "hoge", MB_OK);
 	}
+
+	// build scene
+	{
+		UMTime buildtime("buildtime", true);
+		scene_->mutable_render_scene()->update_bvh();
+	}
+
+	//// (debug) convert bvh to directx11
+	//{
+	//	scene_->load_bvh(device_pointer_);
+	//}
 
 	return true;
 }
@@ -369,7 +398,7 @@ bool UMDirectX11Viewer::refresh()
 	device_context_pointer_->ClearDepthStencilView( depth_stencil_view_pointer_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
 	
 	// refresh scene
-	scene_.refresh(device_pointer_);
+	scene_->refresh(device_pointer_);
 
 	if (dxgi_swap_chain_pointer_)
 	{
@@ -407,7 +436,7 @@ void UMDirectX11Viewer::on_left_button_up(HWND hWnd, short x, short y)
  */
 void UMDirectX11Viewer::on_right_button_down(HWND hWnd, short x, short y)
 {
-	if (scene_.is_rendering()) return;
+	if (scene_->is_rendering()) return;
 	pre_x_ = x;
 	pre_y_ = y;
 	is_right_button_down_ = true;
@@ -419,10 +448,12 @@ void UMDirectX11Viewer::on_right_button_down(HWND hWnd, short x, short y)
  */
 void UMDirectX11Viewer::on_right_button_up(HWND hWnd, short x, short y)
 {
-	if (scene_.is_rendering()) return;
+	if (scene_->is_rendering()) return;
 	if (is_right_button_down_)
 	{
 		ReleaseCapture();
+		
+		::SetWindowTextA(handle_, std::string("burger_viewer").c_str());
 	}
 	is_right_button_down_ = false;
 }
@@ -432,12 +463,12 @@ void UMDirectX11Viewer::on_right_button_up(HWND hWnd, short x, short y)
  */
 void UMDirectX11Viewer::on_mouse_move(HWND hWnd, short x, short y)
 {
-	if (scene_.is_rendering()) return;
+	if (scene_->is_rendering()) return;
 	if (GetCapture() == hWnd)
 	{
 		if (is_left_button_down_)
 		{
-			if (UMCameraPtr camera = scene_.render_scene().camera())
+			if (UMCameraPtr camera = scene_->render_scene()->camera())
 			{
 				camera->rotate(pre_x_ - x, pre_y_ - y);
 				pre_x_ = x;
@@ -446,11 +477,20 @@ void UMDirectX11Viewer::on_mouse_move(HWND hWnd, short x, short y)
 		}
 		if (is_right_button_down_)
 		{
-			if (UMCameraPtr camera = scene_.render_scene().camera())
+			if (UMCameraPtr camera = scene_->render_scene()->camera())
 			{
-				camera->zoom(pre_x_ - x, pre_y_ - y);
-				pre_x_ = x;
-				pre_y_ = y;
+				if (is_ctrl_button_down_)
+				{
+					camera->zoom(pre_x_ - x, pre_y_ - y);
+					pre_x_ = x;
+					pre_y_ = y;
+				}
+				else
+				{
+					camera->dolly(pre_x_ - x, pre_y_ - y);
+					pre_x_ = x;
+					pre_y_ = y;
+				}
 			}
 		}
 	}
@@ -463,10 +503,21 @@ void UMDirectX11Viewer::on_key_down(HWND hWnd, unsigned int key_code)
 {
 	if (key_code == VK_SPACE)
 	{
-		if (!scene_.is_rendering())
+		if (!scene_->is_rendering())
 		{
-			scene_.render(true);
+			scene_->render(device_pointer_, false);
 		}
+	}
+	if (key_code == VK_RETURN)
+	{
+		if (!scene_->is_rendering())
+		{
+			scene_->render(device_pointer_, true);
+		}
+	}
+	if (key_code == VK_CONTROL)
+	{
+		is_ctrl_button_down_ = true;
 	}
 }
 
@@ -475,7 +526,34 @@ void UMDirectX11Viewer::on_key_down(HWND hWnd, unsigned int key_code)
  */
 void UMDirectX11Viewer::on_key_up(HWND hWnd, unsigned int key_code)
 {
-
+	if (key_code == VK_CONTROL)
+	{
+		is_ctrl_button_down_ = false;
+	}
 }
+
+void UMDirectX11Viewer::update(UMEventType event_type, UMAny& parameter)
+{
+	if (event_type == eEventTypeRenderUpdate)
+	{
+		::Sleep(1);
+	}
+	else if (event_type == eEventTypeRenderProgressSample)
+	{
+		int count = any_cast<int>(parameter);
+		::SetWindowTextA(handle_, std::string("burger - rendering.. sample count: " + UMStringUtil::number_to_string(count)).c_str());
+	}
+	else if (event_type == eEventTypeCameraZoom)
+	{
+		double fovy = any_cast<double>(parameter);
+		::SetWindowTextA(handle_, std::string("zoom fovy: " + UMStringUtil::number_to_string((int)fovy)).c_str());
+	}
+	else if (event_type == eEventTypeCameraDolly)
+	{
+		double length = any_cast<double>(parameter);
+		::SetWindowTextA(handle_, std::string("dolly length: " + UMStringUtil::number_to_string(length)).c_str());
+	}
+}
+
 
 } // burger

@@ -13,6 +13,8 @@
 #include "UMMacro.h"
 #include "UMPrimitive.h"
 #include "UMVector.h"
+#include "UMBox.h"
+#include "UMMaterial.h"
 
 namespace burger
 {
@@ -35,7 +37,7 @@ public:
 	UMPlane() :
 		point_(0),
 		normal_(0, 1, 0),
-		color_(0){}
+		material_(UMMaterial::default_material()) {}
 
 	/**
 	 * @param [in] point center point
@@ -44,7 +46,7 @@ public:
 	UMPlane(const UMVec3d& point, const UMVec3d& normal) :
 		point_(point),
 		normal_(normal),
-		color_(0){}
+		material_(UMMaterial::default_material()) {}
 	
 	~UMPlane() {}
 
@@ -74,7 +76,7 @@ public:
 	 * set color
 	 * @param [in] color source color
 	 */
-	void set_color(const UMVec3d& color) { color_ = color; }
+	void set_color(const UMVec3d& color) { material_->set_diffuse(UMVec4d(color, 1.0)); }
 
 	/**
 	 * ray plane intersection
@@ -90,18 +92,29 @@ public:
 	virtual bool intersects(const UMRay& ray) const;
 	
 	/**
+	 * get box
+	 */
+	virtual const UMBox& box() const { return box_; }
+	
+	/**
+	 * update AABB
+	 */
+	virtual void update_box() {}
+
+	/**
 	 * convert to plane mesh
 	 * @param [in] width width
 	 * @param [in] height height
 	 * @retval UMMeshPtr converted mesh
 	 */
 	UMMeshPtr convert_to_mesh(double width, double height) const;
-
+	
 private:
 	UMVec3d point_;
 	UMVec3d normal_;
 	
-	UMVec3d color_;
+	UMBox box_;
+	UMMaterialPtr material_;
 };
 
 } // burger

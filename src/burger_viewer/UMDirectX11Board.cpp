@@ -78,10 +78,12 @@ bool UMDirectX11Board::init(ID3D11Device *device_pointer)
  */
 void UMDirectX11Board::refresh(
 	ID3D11Device* device_pointer,
-	ID3D11SamplerState * sampler_state_pointer,
 	UMDirectX11Texture& texture)
 {
 	if (!device_pointer) return;
+
+	ID3D11SamplerState * sampler_state_pointer = texture.sampler_state_pointer();
+	if (!sampler_state_pointer) return;
 	
 	ID3D11DeviceContext *device_context_pointer = NULL;
 	device_pointer->GetImmediateContext(&device_context_pointer);
@@ -117,8 +119,9 @@ void UMDirectX11Board::refresh(
 
 		// apply pixel shader
 		device_context_pointer->PSSetShader( shaders[1]->pixel_shader_pointer(), NULL, 0 );
-		device_context_pointer->PSSetSamplers( 0, 1, &sampler_state_pointer );
 
+		// texture
+		device_context_pointer->PSSetSamplers( 0, 1, &sampler_state_pointer );
 		ID3D11ShaderResourceView* output_view = texture.resource_view_pointer();
 		device_context_pointer->PSSetShaderResources( 0, 1, &output_view );
 

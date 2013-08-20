@@ -20,5 +20,9 @@
 namespace burger
 {
 
+bool UMLight::sample(UMVec3d& intensity, UMVec3d& direction, const UMShaderParameter& parameter)
+{
+	return false;
+}
 
 } // burger

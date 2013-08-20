@@ -13,12 +13,17 @@
 #include <dxgi.h>
 #include <d3d11.h>
 #include <string>
+#include <memory>
 
 #include "UMMacro.h"
 #include "UMImage.h"
 
 namespace burger
 {
+	
+class UMDirectX11Texture;
+typedef std::shared_ptr<UMDirectX11Texture> UMDirectX11TexturePtr;
+typedef std::vector<UMDirectX11TexturePtr> UMDirectX11TextureList;
 
 /**
  * a texture
@@ -35,6 +40,7 @@ public:
 	explicit UMDirectX11Texture(bool can_overwrite) : 
 		can_overwrite_(can_overwrite), 
 		resource_view_pointer_(NULL),
+		sampler_state_pointer_(NULL),
 		texture_2d_(NULL)
 	{}
 
@@ -43,6 +49,7 @@ public:
 	 */
 	~UMDirectX11Texture() { 
 		SAFE_RELEASE(resource_view_pointer_);
+		SAFE_RELEASE(sampler_state_pointer_);
 		SAFE_RELEASE(texture_2d_);
 	}
 	
@@ -51,6 +58,13 @@ public:
 	 */
 	ID3D11ShaderResourceView* resource_view_pointer() { 
 		return resource_view_pointer_;
+	}
+
+	/**
+	 * get sampler state pointer
+	 */
+	ID3D11SamplerState* sampler_state_pointer() {
+		return sampler_state_pointer_; 
 	}
 
 	/**
@@ -95,6 +109,7 @@ public:
 private:
 	bool can_overwrite_;
 	ID3D11ShaderResourceView* resource_view_pointer_;
+	ID3D11SamplerState * sampler_state_pointer_;
 	ID3D11Texture2D * texture_2d_;
 };
 

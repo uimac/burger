@@ -27,37 +27,53 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\burger\UMAreaLight.cpp" />
     <ClCompile Include="..\src\burger\UMBox.cpp" />
+    <ClCompile Include="..\src\burger\UMBvh.cpp" />
     <ClCompile Include="..\src\burger\UMCamera.cpp" />
+    <ClCompile Include="..\src\burger\UMEvent.cpp" />
     <ClCompile Include="..\src\burger\UMImage.cpp" />
     <ClCompile Include="..\src\burger\UMLight.cpp" />
     <ClCompile Include="..\src\burger\UMMain.cpp" />
     <ClCompile Include="..\src\burger\UMMaterial.cpp" />
     <ClCompile Include="..\src\burger\UMMesh.cpp" />
+    <ClCompile Include="..\src\burger\UMPathTracer.cpp" />
     <ClCompile Include="..\src\burger\UMPlane.cpp" />
-    <ClCompile Include="..\src\burger\UMRaytracer.cpp" />
+    <ClCompile Include="..\src\burger\UMRandomSampler.cpp" />
+    <ClCompile Include="..\src\burger\UMRayTracer.cpp" />
+    <ClCompile Include="..\src\burger\UMSampler.cpp" />
     <ClCompile Include="..\src\burger\UMScene.cpp" />
     <ClCompile Include="..\src\burger\UMSphere.cpp" />
     <ClCompile Include="..\src\burger\UMTga.cpp" />
     <ClCompile Include="..\src\burger\UMTriangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\burger\UMAny.h" />
+    <ClInclude Include="..\src\burger\UMAreaLight.h" />
     <ClInclude Include="..\src\burger\UMBox.h" />
+    <ClInclude Include="..\src\burger\UMBvh.h" />
     <ClInclude Include="..\src\burger\UMCamera.h" />
+    <ClInclude Include="..\src\burger\UMEvent.h" />
+    <ClInclude Include="..\src\burger\UMEventType.h" />
     <ClInclude Include="..\src\burger\UMImage.h" />
     <ClInclude Include="..\src\burger\UMLight.h" />
+    <ClInclude Include="..\src\burger\UMListener.h" />
+    <ClInclude Include="..\src\burger\UMListenerConnector.h" />
     <ClInclude Include="..\src\burger\UMMacro.h" />
     <ClInclude Include="..\src\burger\UMMaterial.h" />
     <ClInclude Include="..\src\burger\UMMath.h" />
     <ClInclude Include="..\src\burger\UMMatrix.h" />
     <ClInclude Include="..\src\burger\UMMesh.h" />
     <ClInclude Include="..\src\burger\UMMeshGroup.h" />
+    <ClInclude Include="..\src\burger\UMPathTracer.h" />
     <ClInclude Include="..\src\burger\UMPlane.h" />
     <ClInclude Include="..\src\burger\UMPrimitive.h" />
+    <ClInclude Include="..\src\burger\UMRandomSampler.h" />
     <ClInclude Include="..\src\burger\UMRay.h" />
-    <ClInclude Include="..\src\burger\UMRaytracer.h" />
+    <ClInclude Include="..\src\burger\UMRayTracer.h" />
     <ClInclude Include="..\src\burger\UMRenderer.h" />
     <ClInclude Include="..\src\burger\UMRenderParameter.h" />
+    <ClInclude Include="..\src\burger\UMSampler.h" />
     <ClInclude Include="..\src\burger\UMScene.h" />
     <ClInclude Include="..\src\burger\UMShaderParameter.h" />
     <ClInclude Include="..\src\burger\UMSphere.h" />
@@ -98,7 +114,7 @@
     <ConfigurationType>HTMLPage</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -218,6 +234,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <LinkerOptimizationLevel>O2</LinkerOptimizationLevel>
+      <RunMinify>false</RunMinify>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
