@@ -29,6 +29,14 @@ std::u16string UMPath::resource_absolute_path(const std::u16string& file_name)
 	SetCurrentDirectory(_T("../../../resource/"));
 	GetCurrentDirectory(1024, path);
 	std::wstring inpath = path + std::wstring(_T("\\")) + UMStringUtil::utf16_to_wstring(file_name);
+	// honban you kozaiku
+	if (! ::PathFileExistsW(inpath.c_str()))
+	{
+		SetCurrentDirectory(path);
+		SetCurrentDirectory(_T("./resource/"));
+		GetCurrentDirectory(1024, path);
+		inpath = path + std::wstring(_T("\\")) + UMStringUtil::utf16_to_wstring(file_name);
+	}
 	return UMStringUtil::wstring_to_utf16(inpath);
 }
 

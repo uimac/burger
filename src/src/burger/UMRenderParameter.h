@@ -26,7 +26,7 @@ class UMRenderParameter
 	DISALLOW_COPY_AND_ASSIGN(UMRenderParameter);
 public:
 	UMRenderParameter() 
-		: super_sampling_count_(1, 1),
+		: super_sampling_count_(2, 2),
 		sample_count_(1024)
 	{}
 

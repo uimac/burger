@@ -106,7 +106,9 @@ void UMDirectX11Scene::render(ID3D11Device* device_pointer, bool is_progressive)
 
 	if (!is_rendering() && !is_rendering_done_)
 	{
+#ifndef HONBAN
 		render_time_ = std::make_shared<UMTime>("render_time", true);
+#endif
 	}
 	
 	if (is_progress_rendering_)
@@ -192,7 +194,9 @@ void UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
 		is_progress_rendering_ = false;
 		is_direct_rendering_ = false;
 		is_rendering_done_ = false;
+#ifndef HONBAN
 		render_time_ = UMTimePtr();
+#endif
 
 		//UMTga tga;
 		//tga.save("hoge.tga", render_parameter_.mutable_output_image());
@@ -323,7 +327,7 @@ void UMDirectX11Scene::create_sample_scene(ID3D11Device* device_pointer)
 	//UMLightPtr umlight = std::make_shared<Light>();
 	//umlight->set_position(UMVec3d(200, 200, 500));
 	UMLightPtr umlight = std::make_shared<UMAreaLight>(
-		UMVec3d(-5, 26.2, -5),
+		UMVec3d(-5, 25.5,-5),
 		UMVec3d(10, 0, 0),
 		UMVec3d(0, 0, 10),
 		0, 0, 1);

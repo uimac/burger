@@ -26,6 +26,8 @@ public:
 	static std::u16string resource_absolute_path(const std::u16string& file_name);
 
 	static std::u16string get_file_name(const std::u16string& file_name);
+
+	static void set_current_directory_to_module_path();
 };
 
 } // burger

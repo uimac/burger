@@ -49,7 +49,8 @@ bool UMTriangle::intersects(
 
 	double inv_dir = 1.0 / d;
 	double distance = t * inv_dir;
-	if (distance < FLT_EPSILON) return false;
+	if (distance < ray.tmin()) return false;
+	if (distance > ray.tmax()) return false;
 
 	// inside triangle ?
 	UMVec3d barycentric = (-ray_dir).cross(ao);

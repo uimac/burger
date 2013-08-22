@@ -341,7 +341,9 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 
 	// create test scene
 	{
+#ifndef HONBAN
 		UMTime loadtime("loadtime", true);
+#endif
 		scene_->init(device_pointer_, width, height);
 		
 		std::string models[] = {
@@ -376,7 +378,9 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 
 	// build scene
 	{
+#ifndef HONBAN
 		UMTime buildtime("buildtime", true);
+#endif
 		scene_->mutable_render_scene()->update_bvh();
 	}
 
@@ -384,6 +388,10 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 	//{
 	//	scene_->load_bvh(device_pointer_);
 	//}
+
+#ifdef HONBAN
+	scene_->render(device_pointer_, true);
+#endif
 
 	return true;
 }
@@ -531,7 +539,6 @@ void UMDirectX11Viewer::on_key_up(HWND hWnd, unsigned int key_code)
 		is_ctrl_button_down_ = false;
 	}
 }
-
 void UMDirectX11Viewer::update(UMEventType event_type, UMAny& parameter)
 {
 	if (event_type == eEventTypeRenderUpdate)
