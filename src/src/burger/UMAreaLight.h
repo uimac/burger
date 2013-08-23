@@ -38,6 +38,7 @@ public:
 		const UMVec3d& position,
 		const UMVec3d& edge1,
 		const UMVec3d& edge2,
+		const UMVec3d& normal,
 		const double constant_fall_off,
 		const double linear_fall_off,
 		const double quadric_fall_off
@@ -48,7 +49,7 @@ public:
 		quadric_fall_off_(quadric_fall_off),
 		edge1_(edge1),
 		edge2_(edge2),
-		normal_(0, -1, 0),
+		normal_(normal),
 		last_sample_point_(0),
 		random_sampler_(std::make_shared<UMRandomSampler>()),
 		UMLight(position)

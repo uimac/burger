@@ -355,8 +355,11 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 			//"q3.bos",
 			//"bunny.bos",
 			//"monkey2.bos",
+#ifdef HONBAN
 			"q3_1.bos",
-			//"piyo.bos",
+#else
+			"piyo.bos",
+#endif
 			//"cornellbox.bos"
 			//"cornellbox_nolight.bos",
 			//"miku_alegro.bos"
@@ -533,8 +536,11 @@ void UMDirectX11Viewer::on_key_down(HWND hWnd, unsigned int key_code)
 	if (key_code == VK_CONTROL)
 	{
 		is_ctrl_button_down_ = true;
-		//scene_->render_scene()->mutable_camera()->rotate(-20, -45);
-		//scene_->render_scene()->mutable_camera()->zoom(0, -10);
+
+#ifndef HONBAN
+		scene_->render_scene()->mutable_camera()->rotate(-20, -45);
+		scene_->render_scene()->mutable_camera()->dolly(0, 30);
+#endif
 	}
 }
 

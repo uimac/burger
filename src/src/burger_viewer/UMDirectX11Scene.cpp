@@ -307,57 +307,58 @@ void UMDirectX11Scene::create_sample_scene(ID3D11Device* device_pointer)
 	if (!device_pointer) return;
 
 	// spheres
-	UMSpherePtr sphere1(std::make_shared<UMSphere>(UMVec3d(-20, -10, -50), 20.0));
-	UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(20, -10, -50), 20.0));
-	UMSpherePtr sphere3(std::make_shared<UMSphere>(UMVec3d(0, 35, 0), 10));
-	UMSpherePtr sphere4(std::make_shared<UMSphere>(UMVec3d(0, 25, 0), 3));
-	sphere1->mutable_material()->set_diffuse(UMVec4d(0.0, 1.0, 0.0, 1.0));
-	sphere2->mutable_material()->set_diffuse(UMVec4d(0.0, 0.0, 1.0, 1.0));
-	sphere3->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
-	sphere3->mutable_material()->set_emissive_factor(10.0);
-	sphere4->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
-	sphere4->mutable_material()->set_emissive(UMVec4d(0.9, 0.9, 0.9, 1.0));
-	sphere4->mutable_material()->set_emissive_factor(10.0);
+	//UMSpherePtr sphere1(std::make_shared<UMSphere>(UMVec3d(-20, -10, -50), 20.0));
+	//UMSpherePtr sphere2(std::make_shared<UMSphere>(UMVec3d(20, -10, -50), 20.0));
+	//UMSpherePtr sphere3(std::make_shared<UMSphere>(UMVec3d(0, 35, 0), 10));
+	//UMSpherePtr sphere4(std::make_shared<UMSphere>(UMVec3d(0, 25, 0), 3));
+	//sphere1->mutable_material()->set_diffuse(UMVec4d(0.0, 1.0, 0.0, 1.0));
+	//sphere2->mutable_material()->set_diffuse(UMVec4d(0.0, 0.0, 1.0, 1.0));
+	//sphere3->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	//sphere3->mutable_material()->set_emissive_factor(10.0);
+	//sphere4->mutable_material()->set_diffuse(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	//sphere4->mutable_material()->set_emissive(UMVec4d(0.9, 0.9, 0.9, 1.0));
+	//sphere4->mutable_material()->set_emissive_factor(10.0);
 
 	// plane
-	UMPlanePtr plane1(std::make_shared<UMPlane>(UMVec3d(0, -30, 0), UMVec3d(0, 1, 0)));
-	plane1->set_color(UMVec3d(0.5, 1.0, 0.5));
+	//UMPlanePtr plane1(std::make_shared<UMPlane>(UMVec3d(0, -30, 0), UMVec3d(0, 1, 0)));
+	//plane1->set_color(UMVec3d(0.5, 1.0, 0.5));
 	
 	// convert to mesh
 	//UMMeshPtr mesh1 = sphere1->convert_to_mesh(32, 32);
 	//UMMeshPtr mesh2 = sphere2->convert_to_mesh(32, 32);
 	//UMMeshPtr mesh3 = sphere3->convert_to_mesh(32, 32);
 	//UMMeshPtr mesh4 = plane1->convert_to_mesh(5000, 5000);
-	UMMeshPtr mesh5 = sphere4->convert_to_mesh(32, 32);
+	//UMMeshPtr mesh5 = sphere4->convert_to_mesh(32, 32);
 	
 	// add to render scene
-	UMMeshGroupPtr umgroup(std::make_shared<UMMeshGroup>());
+	//UMMeshGroupPtr umgroup(std::make_shared<UMMeshGroup>());
 	//umgroup->mutable_mesh_list().push_back(mesh1);
 	//umgroup->mutable_mesh_list().push_back(mesh2);
 	//umgroup->mutable_mesh_list().push_back(mesh3);
 	//umgroup->mutable_mesh_list().push_back(mesh4);
-	umgroup->mutable_mesh_list().push_back(mesh5);
-	render_scene_->mutable_mesh_group_list().push_back(umgroup);
+	//umgroup->mutable_mesh_list().push_back(mesh5);
+	//render_scene_->mutable_mesh_group_list().push_back(umgroup);
 	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere1));
 	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere2));
 	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere3));
 	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(sphere4));
 	//render_scene_->mutable_primitive_list().push_back(UMPrimitivePtr(plane1));
 
-	// convert to dx11 group
-	UMDirectX11MeshGroupPtr converted = UMModelIO::convert_mesh_group_to_dx11_mesh_group(device_pointer, umgroup);
-	if (converted) {
-		dx11_mesh_group_list_.push_back(converted);
-	}
+	//// convert to dx11 group
+	//UMDirectX11MeshGroupPtr converted = UMModelIO::convert_mesh_group_to_dx11_mesh_group(device_pointer, umgroup);
+	//if (converted) {
+	//	dx11_mesh_group_list_.push_back(converted);
+	//}
 	
 	// light
 	//UMLightPtr umlight = std::make_shared<Light>();
 	//umlight->set_position(UMVec3d(200, 200, 500));
 	UMLightPtr umlight = std::make_shared<UMAreaLight>(
 		//UMVec3d(-5, 25.5,-5),
-		UMVec3d(-5, 35,-5),
+		UMVec3d(-10, 30,10),
 		UMVec3d(10, 0, 0),
 		UMVec3d(0, 0, 10),
+		-UMVec3d(-10, 10,10).normalized(),
 		0, 0, 1);
 	render_scene_->mutable_light_list().push_back(umlight);
 	
