@@ -37,11 +37,9 @@ UMVec3d UMAreaLight::intensity(const UMVec3d& point) const
 /** 
  * sample a point
  */
-bool UMAreaLight::sample(UMVec3d& intensity, UMVec3d& point, UMVec3d& direction, const UMShaderParameter& parameter)
+bool UMAreaLight::sample(UMVec3d& intensity, UMVec3d& point, UMVec3d& direction, const UMShaderParameter& parameter, const UMVec2d& random_value)
 {
-	random_sampler_->generate_samples(1);
-	UMVec2d sample(random_sampler_->sample(0));
-	UMVec3d sample_point(edge1_ * sample.x + edge2_ * sample.y + position());
+	UMVec3d sample_point(edge1_ * random_value.x + edge2_ * random_value.y + position());
 	direction = sample_point - parameter.intersect_point;
 	double direction_length_inv = 1.0 / direction.length();
 	double cos_theta_in = std::max( parameter.normal.dot(direction) * direction_length_inv, 0.0 );

@@ -119,7 +119,6 @@ UMPathTracer::UMPathTracer() :
 	current_subpixel_x_(0),
 	current_subpixel_y_(0),
 	max_sample_count_(0),
-	ray_( UMVec3d(0, 0, 500), UMVec3d(0) ),
 	sample_event_(std::make_shared<UMEvent>(eEventTypeRenderProgressSample))
 {
 	mutable_event_list().push_back(sample_event_);
@@ -161,7 +160,7 @@ UMVec3d UMPathTracer::trace(const UMRay& ray, const UMScene& scene, UMShaderPara
 	--parameter.depth;
 
 	// diffuse direct
-	color += illuminate_direct(ray, scene, intersection, parameter);
+	color += illuminate_direct(ray, scene, intersection, parameter, mt);
 	// diffuse indirect
 	color += illuminate_indirect(ray, scene, intersection, parameter, mt) / russian_roulette_probability;
 
@@ -175,7 +174,8 @@ UMVec3d UMPathTracer::illuminate_direct(
 	const UMRay& ray, 
 	const UMScene& scene, 
 	const UMIntersection& intersection,
-	UMShaderParameter& parameter)
+	UMShaderParameter& parameter,
+	std::mt19937& mt)
 {
 	UMVec3d color(0);
 	UMMaterialPtr mat = intersection.closest_parameter.material;
@@ -187,7 +187,8 @@ UMVec3d UMPathTracer::illuminate_direct(
 		UMVec3d intensity;
 		UMVec3d sample_point;
 		UMVec3d direction;
-		if (light->sample(intensity, sample_point, direction, intersection.closest_parameter))
+		UMVec2d random_value(random_range(mt), random_range(mt));
+		if (light->sample(intensity, sample_point, direction, intersection.closest_parameter, random_value))
 		{
 			UMVec3d p(intersection.closest_parameter.intersect_point);
 			UMRay shadow_ray(p, direction.normalized());
@@ -245,8 +246,10 @@ bool UMPathTracer::render(const UMScene& scene, UMRenderParameter& parameter)
 				UMVec2d sample_point(sampler_.sample(s));
 				sample_point.x += x;
 				sample_point.y += y;
-				scene.camera()->generate_ray(ray_, sample_point, (y == 0 && x == 0 && s== 0));
-				UMVec3d color = trace(ray_, scene, shader_param_, mt);
+				UMRay ray;
+				scene.camera()->generate_ray(ray, sample_point, (y == 0 && x == 0 && s== 0));
+				UMShaderParameter shader_parameter;
+				UMVec3d color = trace(ray, scene, shader_parameter, mt);
 				parameter.mutable_output_image().mutable_list()[pos] += UMVec4d(color, 1.0);
 			}
 		}
@@ -312,17 +315,15 @@ bool UMPathTracer::progress_render(const UMScene& scene, UMRenderParameter& para
 		* 1.0 / (current_subpixel_y_ + 1);
 	const double inv_super_sampling_x = 1.0 / (double)super_sampling.x;
 	const double inv_super_sampling_y = 1.0 / (double)super_sampling.y;
-
-
+	
 	std::random_device random_device;
-	std::vector<unsigned int> seed(10);
- 
+	std::vector<unsigned int> seed(2 * height_);
+	std::generate(seed.begin(), seed.end(), std::ref(random_device));
+
 #pragma omp parallel for schedule(dynamic, 1) num_threads(8)
 	for (int y = 0; y < height_; ++y)
 	{
-		std::generate(seed.begin(), seed.end(), std::ref(random_device));
-		std::mt19937 mt(std::seed_seq(seed.begin(), seed.end()));
-
+		std::mt19937 mt(std::seed_seq(seed.begin() + 2 * y, seed.begin() +  2 * (y + 1)));
 		for (int x = 0; x < width_; ++x)
 		{
 			// target pixel
@@ -340,9 +341,11 @@ bool UMPathTracer::progress_render(const UMScene& scene, UMRenderParameter& para
 				&& x == 0 
 				&& current_subpixel_y_ == 0 
 				&& current_subpixel_x_ == 0);
-			scene.camera()->generate_ray(ray_, sample_point, is_initial);
+			UMRay ray;
+			scene.camera()->generate_ray(ray, sample_point, is_initial);
 			// trace
-			UMVec3d color = trace(ray_, scene, shader_param_, mt);
+			UMShaderParameter shader_param;
+			UMVec3d color = trace(ray, scene, shader_param, mt);
 			// output
 			current_color += UMVec4d(color, 1.0);
 

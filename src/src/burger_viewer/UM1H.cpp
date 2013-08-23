@@ -64,7 +64,7 @@ bool UM1H::change_model(ID3D11Device* device_pointer, unsigned long minutes)
 		if (minutes <= model_count)
 		{
 			UMListenerList listeners = scene->renderer()->listener_list();
-			scene->clear(device_pointer, 960, 540);
+			scene->clear(device_pointer, 1280, 720);
 			std::u16string inpath = UMPath::resource_absolute_path(UMStringUtil::utf8_to_utf16(models[minutes-1]));
 			scene->load(device_pointer, inpath);
 			scene->mutable_render_scene()->update_bvh();

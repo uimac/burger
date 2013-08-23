@@ -49,8 +49,6 @@ public:
 	 */
 	virtual bool init() {
 		current_sample_count_ = 0;
-		ray_.set_origin( UMVec3d(0, 0, 500) );
-		ray_.set_direction( UMVec3d(0) );
 		return true;
 	}
 
@@ -93,7 +91,8 @@ private:
 		const UMRay& ray, 
 		const UMScene& scene, 
 		const UMIntersection& intersection, 
-		UMShaderParameter& parameter);
+		UMShaderParameter& parameter,
+		std::mt19937& mt);
 
 	/**
 	 * indirect lighting
@@ -111,8 +110,6 @@ private:
 	int current_subpixel_x_;
 	int current_subpixel_y_;
 	int max_sample_count_;
-	UMRay ray_;
-	UMShaderParameter shader_param_;
 	UMRandomSampler sampler_;
 	UMImage temporary_image_;
 	UMEventPtr sample_event_;

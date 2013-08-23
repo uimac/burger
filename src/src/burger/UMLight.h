@@ -70,8 +70,10 @@ public:
 	 * @param [out] point sampling point
 	 * @param [out] direction light direction
 	 * @param [in] parameter shader parameter on sample point
+	 * @param [in] random_value random value
 	 */
-	virtual bool sample(UMVec3d& intensity, UMVec3d& point, UMVec3d& direction, const UMShaderParameter& parameter) = 0;
+	virtual bool sample(UMVec3d& intensity, UMVec3d& point, UMVec3d& direction, const UMShaderParameter& parameter,
+		const UMVec2d& random_value) = 0;
 	
 private:
 	UMVec3d position_;

@@ -506,7 +506,7 @@ bool UMBvh::intersects(const UMRay& ray, UMShaderParameter& param) const
 	int triangle_intersect_count = 0;
 
 	bool hit = false;
-	static unsigned int branch_stack[2048];
+	unsigned int branch_stack[1024];
 	unsigned int branch_stack_index = 0;
 
 	unsigned int primitive_count = static_cast<unsigned int>(ordered_primitives_.size());
@@ -581,7 +581,7 @@ bool UMBvh::intersects(const UMRay& ray) const
 	UMVec3i dir_is_negative(inv_dir.x < 0, inv_dir.y < 0, inv_dir.z < 0);
 	
 	bool hit = false;
-	static unsigned int branch_stack[2048];
+	unsigned int branch_stack[1024];
 	unsigned int branch_stack_index = 0;
 	for (unsigned int i = 0; ; )
 	{
