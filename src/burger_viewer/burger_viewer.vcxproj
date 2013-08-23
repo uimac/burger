@@ -142,7 +142,7 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/$(PlatformTarget)/;$(BOOST_ROOT)lib/</AdditionalLibraryDirectories>
       <StackReserveSize>
       </StackReserveSize>
-      <StackCommitSize>5000000</StackCommitSize>
+      <StackCommitSize>50000000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

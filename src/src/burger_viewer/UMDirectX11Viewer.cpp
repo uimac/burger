@@ -355,9 +355,10 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 			//"q3.bos",
 			//"bunny.bos",
 			//"monkey2.bos",
-			//"q1.bos",
+			"q3_1.bos",
+			//"piyo.bos",
 			//"cornellbox.bos"
-			"cornellbox_nolight.bos",
+			//"cornellbox_nolight.bos",
 			//"miku_alegro.bos"
 			//"dabrovic-sponza.bos",
 		};
@@ -384,6 +385,9 @@ bool UMDirectX11Viewer::init_devices(HWND hWnd, int width, int height)
 		scene_->mutable_render_scene()->update_bvh();
 	}
 
+	// for rendering1h
+	scene_->rendering1h().set_scene(scene_);
+
 	//// (debug) convert bvh to directx11
 	//{
 	//	scene_->load_bvh(device_pointer_);
@@ -406,7 +410,10 @@ bool UMDirectX11Viewer::refresh()
 	device_context_pointer_->ClearDepthStencilView( depth_stencil_view_pointer_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
 	
 	// refresh scene
-	scene_->refresh(device_pointer_);
+	if (!scene_->refresh(device_pointer_))
+	{
+		return false;
+	}
 
 	if (dxgi_swap_chain_pointer_)
 	{
@@ -526,6 +533,8 @@ void UMDirectX11Viewer::on_key_down(HWND hWnd, unsigned int key_code)
 	if (key_code == VK_CONTROL)
 	{
 		is_ctrl_button_down_ = true;
+		//scene_->render_scene()->mutable_camera()->rotate(-20, -45);
+		//scene_->render_scene()->mutable_camera()->zoom(0, -10);
 	}
 }
 

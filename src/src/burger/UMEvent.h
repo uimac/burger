@@ -49,11 +49,9 @@ public:
 		parameter_ = parameter;
 	}
 
-private:
-	typedef std::vector<UMListenerWeakPtr> ListenerList;
-	
+private:	
 	const UMEventType key_;
-	ListenerList listeners_;
+	UMListenerList listeners_;
 	UMAny parameter_;
 };
 

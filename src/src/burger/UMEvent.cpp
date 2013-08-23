@@ -19,7 +19,7 @@ namespace burger
  */
 void UMEvent::notify()
 {
-	ListenerList::iterator it = listeners_.begin();
+	UMListenerList::iterator it = listeners_.begin();
 	for (; it != listeners_.end(); ++it)
 	{
 		if (UMListenerPtr listener = (*it).lock())
@@ -42,7 +42,7 @@ void UMEvent::add_listener(UMListenerWeakPtr listener)
  */
 void UMEvent::delete_listener(UMListenerWeakPtr listener)
 {
-	ListenerList::iterator it = listeners_.begin();
+	UMListenerList::iterator it = listeners_.begin();
 	for (int i = static_cast<int>(listeners_.size() - 1); i >= 0; --i)
 	{
 		if (listeners_.at(i).lock() == listener.lock())

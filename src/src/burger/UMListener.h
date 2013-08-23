@@ -19,6 +19,7 @@ namespace burger
 class UMListener;
 typedef std::shared_ptr<UMListener> UMListenerPtr;
 typedef std::weak_ptr<UMListener> UMListenerWeakPtr;
+typedef std::vector<UMListenerWeakPtr> UMListenerList;
 
 class UMAny;
 

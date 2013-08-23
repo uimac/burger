@@ -12,6 +12,7 @@
 #include <dxgi.h>
 #include <d3d11.h>
 #include <string>
+#include <memory>
 #include "UMMacro.h"
 #include "UMScene.h"
 #include "UMRenderer.h"
@@ -32,6 +33,7 @@ namespace burger
 
 class UMDirectX11Scene;
 typedef std::shared_ptr<UMDirectX11Scene> UMDirectX11ScenePtr;
+typedef std::weak_ptr<UMDirectX11Scene> UMDirectX11SceneWeakPtr;
 
 /**
  * directx11 secne.
@@ -51,6 +53,11 @@ public:
 	bool init(ID3D11Device *device, int width, int height);
 	
 	/**
+	 * clear scene
+	 */
+	void clear(ID3D11Device *device_pointer, int width, int height);
+
+	/**
 	 * load *.bos file
 	 */
 	bool load(ID3D11Device* device_pointer, const std::u16string& absolute_bos_filepath);
@@ -58,7 +65,7 @@ public:
 	/**
 	 * refresh scene
 	 */
-	void refresh(ID3D11Device* device_pointer);
+	bool refresh(ID3D11Device* device_pointer);
 
 	/**
 	 * render by burger
@@ -104,6 +111,11 @@ public:
 	 * (for debug) load bvh boxies to dx11 scene
 	 */
 	void load_bvh(ID3D11Device* device_pointer);
+
+	/**
+	 * (for rendering 1h) 
+	 */
+	UM1H& rendering1h() { return rendering1h_; }
 
 private:
 	// burger scene

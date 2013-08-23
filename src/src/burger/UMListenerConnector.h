@@ -39,7 +39,11 @@ public:
 		{
 			(*it)->add_listener(listener);
 		}
+		listeners_.push_back(listener);
 	}
+
+	UMListenerList& listener_list() { return listeners_; }
+
 protected:
 	UMListenerConnector() {}
 
@@ -50,6 +54,7 @@ protected:
 
 private:
 	UMEventList event_list_;
+	UMListenerList listeners_;
 };
 
 } // burger

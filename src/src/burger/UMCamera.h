@@ -114,6 +114,11 @@ public:
 	const UMVec3d& position() const { return position_; }
 
 	/**
+	 * set position
+	 */
+	void set_position(const UMVec3d& position) { position_ = position; }
+
+	/**
 	 * get target
 	 */
 	const UMVec3d& target() const { return target_; }

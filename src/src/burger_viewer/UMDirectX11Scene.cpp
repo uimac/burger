@@ -63,6 +63,9 @@ bool UMDirectX11Scene::init(ID3D11Device *device_pointer, int width, int height)
 	renderer_->set_width(width);
 	renderer_->set_height(height);
 	
+	dx11_mesh_group_list_.clear();
+	dx11_light_list_.clear();
+
 	// render scene
 	render_scene_ = (std::make_shared<UMScene>());
 	render_scene_->init(width, height);
@@ -92,6 +95,25 @@ bool UMDirectX11Scene::init(ID3D11Device *device_pointer, int width, int height)
 	SAFE_RELEASE(device_context_pointer);
 
 	return true;
+}
+
+void UMDirectX11Scene::clear(ID3D11Device *device_pointer, int width, int height)
+{
+	// renderer
+	//renderer_(std::make_shared<UMRayTracer>();
+	render_parameter_.mutable_output_image().clear();
+	renderer_ = std::make_shared<UMPathTracer>();
+	renderer_->init();
+	renderer_->set_width(width);
+	renderer_->set_height(height);
+	
+	dx11_mesh_group_list_.clear();
+	dx11_light_list_.clear();
+
+	// render scene
+	render_scene_ = (std::make_shared<UMScene>());
+	render_scene_->init(width, height);
+	create_sample_scene(device_pointer);
 }
 
 /**
@@ -131,13 +153,16 @@ void UMDirectX11Scene::render(ID3D11Device* device_pointer, bool is_progressive)
 /**
  * refresh scene
  */
-void UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
+bool UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
 {
-	if (!device_pointer) return;
-	if (!shader_manager_) return;
+	if (!device_pointer) return false;
+	if (!shader_manager_) return false;
 
 	// refresh rendering1h
-	rendering1h_.refresh(device_pointer, output_texture_);
+	if (!rendering1h_.refresh(device_pointer, output_texture_))
+	{
+		return false;
+	}
 
 	ID3D11DeviceContext *device_context_pointer = NULL;
 	device_pointer->GetImmediateContext(&device_context_pointer);
@@ -219,6 +244,8 @@ void UMDirectX11Scene::refresh(ID3D11Device* device_pointer)
 	}
 	
 	SAFE_RELEASE(device_context_pointer);
+
+	return true;
 }
 
 /**
@@ -327,7 +354,8 @@ void UMDirectX11Scene::create_sample_scene(ID3D11Device* device_pointer)
 	//UMLightPtr umlight = std::make_shared<Light>();
 	//umlight->set_position(UMVec3d(200, 200, 500));
 	UMLightPtr umlight = std::make_shared<UMAreaLight>(
-		UMVec3d(-5, 25.5,-5),
+		//UMVec3d(-5, 25.5,-5),
+		UMVec3d(-5, 35,-5),
 		UMVec3d(10, 0, 0),
 		UMVec3d(0, 0, 10),
 		0, 0, 1);
@@ -338,7 +366,6 @@ void UMDirectX11Scene::create_sample_scene(ID3D11Device* device_pointer)
 
 	// camera
 	camera_ = UMModelIO::convert_camera_to_dx11_camera(device_pointer, render_scene_->camera());
-
 }
 
 void UMDirectX11Scene::load_bvh(ID3D11Device* device_pointer)
